@@ -15,7 +15,7 @@ func _ready() -> void:
 		add_child(structure_origin)
 	if center_structure:
 		structure_origin.global_position -= (Vector3(structure_size)*test_structure.grid_size)/2 - Vector3.ONE*test_structure.grid_size/2
-		print(structure_origin.global_position)
+		#print(structure_origin.global_position)
 	var generator: StructureGenerator = StructureGenerator.new(test_structure, structure_size)
 	if generator.generate():
 		generator.instantiate_in_world(structure_origin)

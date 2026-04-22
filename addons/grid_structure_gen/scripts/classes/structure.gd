@@ -7,7 +7,7 @@ class_name Structure
 ## * Grid size.[br]
 ## * All the rooms of the structure.[br]
 
-## The StringName of the default "Empty cell" used by the WFC to compute the possible 
+## The StringName of the default "Empty cell"
 const EMPTY_CELL : StringName = &"EMPTY"
 
 ## The StringName of the FORWARD direction (-Z)

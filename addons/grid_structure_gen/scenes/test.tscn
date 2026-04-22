@@ -35,7 +35,7 @@ albedo_color = Color(0, 0.47843137, 1, 1)
 [node name="Test" type="Node3D" unique_id=457018281 node_paths=PackedStringArray("structure_origin")]
 script = ExtResource("1_wrfgs")
 test_structure = ExtResource("2_g4yro")
-structure_size = Vector3i(8, 8, 8)
+structure_size = Vector3i(8, 3, 8)
 structure_origin = NodePath("Origin")
 
 [node name="Origin" type="Node3D" parent="." unique_id=1943486469]
