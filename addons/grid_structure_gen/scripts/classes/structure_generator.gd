@@ -233,7 +233,7 @@ func _apply_border_constraints() -> void:
 
 
 # ---- MAIN LOOP ----
-func generate(max_attempts: int = 1000) -> bool:
+func generate(max_attempts: int = 100) -> bool:
 	for attempt in range(max_attempts):
 		setup()
 		
