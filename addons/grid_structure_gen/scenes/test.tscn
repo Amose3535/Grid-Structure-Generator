@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://4nh3n2bgwc4p"]
+
+[ext_resource type="Script" uid="uid://cl4fgobv4au10" path="res://addons/grid_structure_gen/scenes/test.gd" id="1_wrfgs"]
+[ext_resource type="Resource" uid="uid://dxyghsj41tay0" path="res://addons/grid_structure_gen/resources/structures/structure_1/structure_1.tres" id="2_g4yro"]
+[ext_resource type="Script" uid="uid://ticuom82hhp1" path="res://addons/grid_structure_gen/scenes/pivot.gd" id="3_l0iqv"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g4yro"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_l0iqv"]
+sky_material = SubResource("ProceduralSkyMaterial_g4yro")
+
+[sub_resource type="Environment" id="Environment_gpnbv"]
+background_mode = 2
+sky = SubResource("Sky_l0iqv")
+tonemap_mode = 2
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_g4yro"]
+radius = 0.05
+height = 20.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l0iqv"]
+shading_mode = 0
+albedo_color = Color(0.23529412, 0.9529412, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gpnbv"]
+shading_mode = 0
+albedo_color = Color(1, 0.14901961, 0.1882353, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2xsvl"]
+shading_mode = 0
+albedo_color = Color(0, 0.47843137, 1, 1)
+
+[node name="Test" type="Node3D" unique_id=457018281 node_paths=PackedStringArray("structure_origin")]
+script = ExtResource("1_wrfgs")
+test_structure = ExtResource("2_g4yro")
+structure_size = Vector3i(8, 8, 8)
+structure_origin = NodePath("Origin")
+
+[node name="Origin" type="Node3D" parent="." unique_id=1943486469]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]
+environment = SubResource("Environment_gpnbv")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1304499009]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1969220233]
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_g4yro")
+surface_material_override/0 = SubResource("StandardMaterial3D_l0iqv")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1630930079]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_g4yro")
+surface_material_override/0 = SubResource("StandardMaterial3D_gpnbv")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=62042514]
+transform = Transform3D(1.9106855e-15, -4.371139e-08, -1, -1, -4.371139e-08, 0, -4.371139e-08, 1, -4.371139e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_g4yro")
+surface_material_override/0 = SubResource("StandardMaterial3D_2xsvl")
+
+[node name="Pivot" type="Node3D" parent="." unique_id=652139535]
+script = ExtResource("3_l0iqv")
+
+[node name="Camera3D" type="Camera3D" parent="Pivot" unique_id=620215085]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
