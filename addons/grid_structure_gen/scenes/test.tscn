@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://cl4fgobv4au10" path="res://addons/grid_structure_gen/scenes/test.gd" id="1_wrfgs"]
 [ext_resource type="Resource" uid="uid://dxyghsj41tay0" path="res://addons/grid_structure_gen/resources/structures/structure_1/structure_1.tres" id="2_g4yro"]
 [ext_resource type="Script" uid="uid://ticuom82hhp1" path="res://addons/grid_structure_gen/scenes/pivot.gd" id="3_l0iqv"]
+[ext_resource type="Script" uid="uid://bmcyxphiu3fut" path="res://addons/grid_structure_gen/scenes/FPS_counter.gd" id="4_gpnbv"]
+[ext_resource type="Gradient" uid="uid://bsdxwmlxaemcd" path="res://addons/grid_structure_gen/resources/color_gradient.tres" id="5_2xsvl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g4yro"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -18,11 +20,16 @@ tonemap_mode = 2
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g4yro"]
 radius = 0.05
-height = 20.0
+height = 50.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l0iqv"]
 shading_mode = 0
 albedo_color = Color(0.23529412, 0.9529412, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_l0iqv"]
+top_radius = 0.0
+bottom_radius = 0.25
+height = 1.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gpnbv"]
 shading_mode = 0
@@ -32,13 +39,10 @@ albedo_color = Color(1, 0.14901961, 0.1882353, 1)
 shading_mode = 0
 albedo_color = Color(0, 0.47843137, 1, 1)
 
-[node name="Test" type="Node3D" unique_id=457018281 node_paths=PackedStringArray("structure_origin")]
+[node name="Test" type="Node3D" unique_id=457018281]
 script = ExtResource("1_wrfgs")
 test_structure = ExtResource("2_g4yro")
-structure_size = Vector3i(8, 3, 8)
-structure_origin = NodePath("Origin")
-
-[node name="Origin" type="Node3D" parent="." unique_id=1943486469]
+structure_size = Vector3i(20, 1, 20)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]
 environment = SubResource("Environment_gpnbv")
@@ -52,10 +56,22 @@ cast_shadow = 0
 mesh = SubResource("CapsuleMesh_g4yro")
 surface_material_override/0 = SubResource("StandardMaterial3D_l0iqv")
 
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="MeshInstance3D" unique_id=342756663]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_l0iqv")
+surface_material_override/0 = SubResource("StandardMaterial3D_l0iqv")
+
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1630930079]
 transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_g4yro")
+surface_material_override/0 = SubResource("StandardMaterial3D_gpnbv")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D2" unique_id=773810704]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0927847e-06, 25, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_l0iqv")
 surface_material_override/0 = SubResource("StandardMaterial3D_gpnbv")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=62042514]
@@ -64,8 +80,59 @@ cast_shadow = 0
 mesh = SubResource("CapsuleMesh_g4yro")
 surface_material_override/0 = SubResource("StandardMaterial3D_2xsvl")
 
-[node name="Pivot" type="Node3D" parent="." unique_id=652139535]
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D3" unique_id=1219493730]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0927847e-06, 25, -1.0927847e-06)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_l0iqv")
+surface_material_override/0 = SubResource("StandardMaterial3D_2xsvl")
+
+[node name="Pivot" type="Node3D" parent="." unique_id=652139535 node_paths=PackedStringArray("camera")]
 script = ExtResource("3_l0iqv")
+sensitivity = Vector2(0.005, 0.005)
+camera = NodePath("Camera3D")
 
 [node name="Camera3D" type="Camera3D" parent="Pivot" unique_id=620215085]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=162327725]
+
+[node name="Control" type="MarginContainer" parent="CanvasLayer" unique_id=78940029]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Control" type="Control" parent="CanvasLayer/Control" unique_id=1183053761]
+layout_mode = 2
+
+[node name="Re_Generate_button" type="Button" parent="CanvasLayer/Control/Control" unique_id=477554931]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -130.0
+offset_top = -46.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Re-generate"
+
+[node name="FPS_counter" type="RichTextLabel" parent="CanvasLayer/Control/Control" unique_id=1147405380]
+layout_mode = 0
+offset_right = 151.0
+offset_bottom = 125.0
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+script = ExtResource("4_gpnbv")
+color_gradient = ExtResource("5_2xsvl")
+metadata/_custom_type_script = "uid://bmcyxphiu3fut"
+
+[connection signal="pressed" from="CanvasLayer/Control/Control/Re_Generate_button" to="." method="_on_regenerate_button_pressed"]

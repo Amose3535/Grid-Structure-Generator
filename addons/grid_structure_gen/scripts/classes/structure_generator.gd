@@ -2,268 +2,248 @@
 extends RefCounted
 class_name StructureGenerator
 
-
+## Signal emitted when generate_async finishes generating the logical structure
+signal generation_finished(result_grid: Dictionary[Vector3i, Cell])
 
 ## The resource of the structure needed to be generated
 var structure: Structure
 ## How many cells there are for any given direction (X, Y, and Z)
 var grid_bounds: Vector3i
-## The available options for every single cell (starts from superposition)
-var wave: Dictionary[Vector3i, Array]
-## The compaitbility table used by the wave function collapse
-var compatibility_table: Dictionary[String, Dictionary]
-## The array containing every segment id (the analogous of [code]structure.structure_sections.keys()[/code])
-var all_segment_ids: Array[StringName]
-## Wether the generator should ignore all the cells with an open border towards the border (bugged right now, DO NOT use)
-var border_constraint: bool = false
+## Direction mapping
+const DIR_VECTORS : Dictionary[Vector3i, StringName]= {
+	Vector3i(0, 0, -1): Structure.FORWARD,
+	Vector3i(0, 0, 1): Structure.BACKWARD,
+	Vector3i(-1, 0, 0): Structure.LEFT,
+	Vector3i(1, 0, 0): Structure.RIGHT,
+	Vector3i(0, 1, 0): Structure.UP,
+	Vector3i(0, -1, 0): Structure.DOWN
+}
 
+const OPPOSITE_DIRS = {
+	Structure.FORWARD: Structure.BACKWARD,
+	Structure.BACKWARD: Structure.FORWARD,
+	Structure.LEFT: Structure.RIGHT,
+	Structure.RIGHT: Structure.LEFT,
+	Structure.UP: Structure.DOWN,
+	Structure.DOWN: Structure.UP
+}
 
-func _init(p_structure: Structure, p_bounds: Vector3i) -> void:
-	grid_bounds = p_bounds
-	structure = p_structure
+## Logic grid that maps Vector3i to the cells
+var grid: Dictionary[Vector3i, Cell] = {}
 
-func setup() -> void:
-	all_segment_ids = structure.structure_sections.keys()
-	all_segment_ids.append(Structure.EMPTY_CELL)
+## Pre-computed matrix of all the rules[br]
+## FORMAT: rules[stato_A][direzione] = { stato_B: peso } (=> Dictionary[StringName, Dictionary[StringName, Dictionary[StringName, float]]])
+var rules: Dictionary[StringName,Dictionary] = {}
+
+## Internal cell class
+class Cell:
+	## The relative position in the structure coordinates
+	var position: Vector3i
+	## 
+	var possible_states: Dictionary[StringName, float] # StringName : float (weight)
+	var is_collapsed: bool = false
+	var final_state: StringName = &""
 	
-	compatibility_table = structure._build_compatibility_table()
+	func get_entropy() -> int:
+		return possible_states.size()
+
+
+func _init(_structure: Structure, _bounds: Vector3i):
+	structure = _structure
+	grid_bounds = _bounds
+	_build_rules() # Pre-compute logical connections before building the grid
+	_initialize_grid()
+
+func _build_rules():
+	var all_states: Array[StringName] = structure.structure_sections.keys().duplicate()
+	all_states.append(structure.EMPTY_CELL)
 	
-	_initialize_wave()
-
-
-func _initialize_wave() -> void:
-	wave.clear()
-	var x_bounds: Array = range(grid_bounds.x)
-	var y_bounds: Array = range(grid_bounds.y)
-	var z_bounds: Array = range(grid_bounds.z)
-	for x in x_bounds:
-		for y in y_bounds:
-			for z in z_bounds:
-				# Each cell starts from every possible combination
-				wave[Vector3i(x, y, z)] = all_segment_ids.duplicate()
-
-func instantiate_in_world(parent: Node3D) -> void:
-	for cell: Vector3i in wave:
-		var options: Array = wave[cell]
+	# Create empty structure
+	for state: StringName in all_states:
+		rules[state] = {}
+		for dir in DIR_VECTORS.values():
+			rules[state][dir] = {}
+			
+	# Populate rules based on segments.
+	for state in structure.structure_sections.keys():
+		var segment: StructureSegment = structure.structure_sections[state]
+		for dir in DIR_VECTORS.values():
+			var connections = segment.get(dir)
+			
+			# IF nothing is defined, by assumption, it should connect to EMPTY
+			if connections == null or connections.is_empty():
+				rules[state][dir][structure.EMPTY_CELL] = 1.0
+			else:
+				for neighbor in connections:
+					rules[state][dir][neighbor] = connections[neighbor]
+					
+	# Ruleset for EMPTY cells: EMPTY always connects to EMPTY (IMPORTANT TO PREVENT ERRORS!!!!!!)
+	for dir:StringName in DIR_VECTORS.values():
+		rules[structure.EMPTY_CELL][dir][structure.EMPTY_CELL] = 1.0
 		
-		# Salta celle vuote o non collassate correttamente
-		if options.size() != 1:
-			push_warning("Cella %s non collassata correttamente" % cell)
-			continue
+	# Automatically force symmetry: If A wants B on its side, then  be should want A on the opposite side too (even if the user didn't define it) to prevent errors
+	for state_A in all_states:
+		for dir in rules[state_A]:
+			var opposite_dir = OPPOSITE_DIRS[dir]
+			for state_B in rules[state_A][dir]:
+				var weight = rules[state_A][dir][state_B]
+				
+				if not rules[state_B][opposite_dir].has(state_A):
+					rules[state_B][opposite_dir][state_A] = weight
+
+func _initialize_grid():
+	# Make a dictionary with all states and their initial weights (assume 1.0 if not specified otherwise)
+	var all_states: Dictionary[StringName, float] = {}
+	for key:StringName in structure.structure_sections.keys():
+		all_states[key] = 1.0
+	all_states[structure.EMPTY_CELL] = 1.0 # EMPTY is a valid state too
+	
+	for x:int in range(grid_bounds.x):
+		for y:int in range(grid_bounds.y):
+			for z:int in range(grid_bounds.z):
+				var pos: Vector3i = Vector3i(x, y, z)
+				var cell: Cell = Cell.new()
+				cell.position = pos
+				cell.possible_states = all_states.duplicate()
+				grid[pos] = cell
+
+## Function responsible for the WFC argorithm
+func generate() -> Dictionary[Vector3i,Cell]:
+	while true:
+		var cell_to_collapse: Cell = _get_lowest_entropy_cell()
 		
-		var seg_id: StringName = options[0]
-		var segment: StructureSegment = structure.structure_sections.get(seg_id)
+		# If there are no more cells to collapse, then it's done and the generation should stop
+		if cell_to_collapse == null:
+			break
+			
+		# If entropy == 0, there's a contradiction.
+		# NOTE: Should backtrack but who cares am i right fellas?.
+		if cell_to_collapse.get_entropy() == 0:
+			push_error("WFC Contradiction at: ", cell_to_collapse.position)
+			return {}
+			
+		_collapse_cell(cell_to_collapse)
+		_propagate(cell_to_collapse)
 		
-		if segment == null or segment.segment_scene == null:
-			continue
+	return grid
+
+## If you plan on using multithreading, CALL THIS function instead of generate() as that one won't emit the necessary signal
+func generate_async() -> void:
+	# Wraps generate function
+	var grid_result: Dictionary[Vector3i,Cell] = generate() 
+	
+	# Emit signal containing the necessary grid result
+	emit_signal.call_deferred("generation_finished", grid_result)
+
+
+
+
+## Function responsible for WFC logic
+func _get_lowest_entropy_cell() -> Cell:
+	var min_entropy: int = 999999
+	var best_cells: Array[Cell] = []
+	
+	for pos:Vector3i in grid:
+		var cell: Cell = grid[pos]
+		if not cell.is_collapsed:
+			var entropy: int = cell.get_entropy()
+			if entropy < min_entropy:
+				min_entropy = entropy
+				best_cells = [cell]
+			elif entropy == min_entropy:
+				best_cells.append(cell)
+				
+	if best_cells.is_empty():
+		return null
 		
-		# Calcola la posizione nel mondo 3D
-		var world_pos: Vector3 = Vector3(
-			cell.x * structure.grid_size,
-			cell.y * structure.grid_size,
-			cell.z * structure.grid_size
-		)
+	# Choose random cell within the ones with minimum entropy
+	return best_cells.pick_random()
+
+func _collapse_cell(cell: Cell):
+	var chosen_state: StringName = _get_weighted_random_state(cell.possible_states)
+	cell.is_collapsed = true
+	cell.final_state = chosen_state
+	# Remove every other state other than the chosen one
+	cell.possible_states = { chosen_state: cell.possible_states[chosen_state] }
+
+func _propagate(start_cell: Cell):
+	var stack: Array[Cell] = [start_cell]
+	
+	while not stack.is_empty():
+		var current_cell: Cell = stack.pop_back()
 		
-		var instance = segment.segment_scene.instantiate() as Node3D
-		instance.position = world_pos
-		parent.add_child(instance)
-
-#region WFC
-# ---- OBSERVE ----
-
-func observe() -> Vector3i:
-	var min_entropy := INF
-	var candidates: Array[Vector3i] = []
-	
-	for cell: Vector3i in wave:
-		var count := wave[cell].size()
-		if count <= 1:
-			continue
-		if count < min_entropy:
-			min_entropy = count
-			candidates = [cell]
-		elif count == min_entropy:
-			candidates.append(cell)
-	
-	var chosen: Vector3i = candidates.pick_random()
-	_collapse(chosen)
-	return chosen
-
-func observe_adjacent() -> Vector3i:
-	var min_entropy := INF
-	var candidates: Array[Vector3i] = []
-	
-	# Considera solo le celle sul "fronte" della struttura
-	var frontier := _get_frontier()
-	
-	# Se il fronte è vuoto la struttura non può crescere oltre
-	if frontier.is_empty():
-		return Vector3i(-1, -1, -1)  # segnale di stop
-	
-	for cell in frontier:
-		var count := wave[cell].size()
-		if count <= 1:
-			continue
-		if count < min_entropy:
-			min_entropy = count
-			candidates = [cell]
-		elif count == min_entropy:
-			candidates.append(cell)
-	
-	if candidates.is_empty():
-		return Vector3i(-1, -1, -1)
-	
-	var chosen := candidates.pick_random()
-	_collapse(chosen)
-	return chosen
-
-
-func _get_frontier() -> Array[Vector3i]:
-	var frontier: Array[Vector3i] = []
-	for cell: Vector3i in wave:
-		if wave[cell].size() != 1:
-			continue
-		if wave[cell][0] == Structure.EMPTY_CELL:
-			continue
-		# Questa cella è collassata con un segmento reale
-		# I suoi vicini non collassati sono il fronte
-		for dir in Structure.DIRECTIONS:
-			var neighbor := cell + Structure.DIRECTIONS[dir]
-			if not _in_bounds(neighbor):
+		for dir_vec: Vector3i in DIR_VECTORS:
+			var neighbor_pos: Vector3i = current_cell.position + dir_vec
+			
+			# Chech if the neighbor is within the grid
+			if not grid.has(neighbor_pos):
 				continue
-			if wave[neighbor].size() > 1:
-				frontier.append(neighbor)
-	return frontier
-
-
-func _collapse(cell: Vector3i) -> void:
-	var options: Array = wave[cell]
-	var chosen := _weighted_pick(options)
-	wave[cell] = [chosen]
-
-
-func _weighted_pick(options: Array) -> StringName:
-	var total_weight := 0.0
-	var weights: Array[float] = []
-
-	for seg_id: StringName in options:
-		var w := 1.0
-		if seg_id != Structure.EMPTY_CELL:
-			w = structure.structure_sections[seg_id].spawn_weight
-		weights.append(w)
-		total_weight += w
-
-	var r := randf() * total_weight
-	var cumulative := 0.0
-	for i in range(options.size()):
-		cumulative += weights[i]
-		if r <= cumulative:
-			return options[i]
-
-	return options[-1]
-
-
-
-# ---- PROPAGATE ----
-
-func propagate(start: Vector3i) -> bool:
-	var queue: Array[Vector3i] = [start]
-	var in_queue: Dictionary[Vector3i, bool] = { start: true }
-	
-	while queue.size() > 0:
-		var current: Vector3i = queue.pop_front()
-		in_queue.erase(current)
-		
-		for dir: StringName in Structure.DIRECTIONS:
-			var neighbor: Vector3i = current + Structure.DIRECTIONS[dir]
-			
-			if not _in_bounds(neighbor):
+				
+			var neighbor: Cell = grid[neighbor_pos]
+			if neighbor.is_collapsed:
 				continue
-			if wave[neighbor].size() <= 1:
-				continue
+				
+			var dir_name: StringName = DIR_VECTORS[dir_vec]
+			var possible_neighbor_states_now: Dictionary = _get_valid_neighbors_for_states(current_cell.possible_states.keys(), dir_name)
 			
-			# Calcola quali opzioni sono ancora supportate in neighbor
-			var supported := _compute_supported(current, dir)
-			
-			# Rimuovi da neighbor tutto ciò che non è supportato
-			var before := wave[neighbor].size()
-			wave[neighbor] = wave[neighbor].filter(
-				func(opt): return opt in supported
-			)
-			var after := wave[neighbor].size()
-			
-			if after == 0:
-				return false  # contraddizione
-			
-			# Se abbiamo rimosso qualcosa, neighbor deve propagare ai suoi vicini
-			if after < before and not in_queue.has(neighbor):
-				queue.append(neighbor)
-				in_queue[neighbor] = true
+			var changed = false
+			# Chech the neghbor' states: If they aren't allowed by the current cell, delete them
+			for state in neighbor.possible_states.keys().duplicate():
+				if not possible_neighbor_states_now.has(state):
+					neighbor.possible_states.erase(state)
+					changed = true
+					
+			# If the neighbor has changed its posible states, it must propagate
+			if changed and not stack.has(neighbor):
+				stack.append(neighbor)
+
+## Helps propagate to find the valid neighbor states
+func _get_valid_neighbors_for_states(current_states: Array[StringName], dir_name: String) -> Dictionary:
+	var valid_states: Dictionary = {}
 	
-	return true
-
-
-func _compute_supported(current: Vector3i, dir: StringName) -> Array:
-	# Raccoglie tutti i segmenti compatibili nella direzione dir
-	# guardando le opzioni ancora disponibili in current
-	var supported: Dictionary[StringName, bool] = {}
-	for seg_id: StringName in wave[current]:
-		for compatible: StringName in compatibility_table[seg_id][dir]:
-			supported[compatible] = true
-	return supported.keys()
-
-
-func _in_bounds(cell: Vector3i) -> bool:
-	return (
-		cell.x >= 0 and cell.x < grid_bounds.x and
-		cell.y >= 0 and cell.y < grid_bounds.y and
-		cell.z >= 0 and cell.z < grid_bounds.z
-	)
-
-func _apply_border_constraints() -> void:
-	for cell: Vector3i in wave:
-		for dir: StringName in Structure.DIRECTIONS:
-			var neighbor := cell + Structure.DIRECTIONS[dir]
-			if _in_bounds(neighbor):
-				continue
-			# Questa faccia è sul bordo: rimuovi tutto ciò che non è compatibile con EMPTY
-			wave[cell] = wave[cell].filter(func(seg_id):
-				return (Structure.EMPTY_CELL in compatibility_table[seg_id][dir])
-			)
-
-
-# ---- MAIN LOOP ----
-func generate(max_attempts: int = 100) -> bool:
-	for attempt in range(max_attempts):
-		setup()
+	for state: StringName in current_states:
+		# Pick allowed neighbors from the rule matrix
+		var allowed_neighbors: Dictionary = (rules[state][dir_name])
 		
-		if border_constraint:
-			_apply_border_constraints()
-		
-		var contradiction := false
-		
-		#var max_cycles: int = 1000
-		#var current_cycle: int = 0
-		while (not _all_collapsed()):
-			var chosen := observe()
-			if not propagate(chosen):
-				contradiction = true
-				break
-			#current_cycle += 1
-			#print(current_cycle)
-		
-		if not contradiction:
-			return true
-		
-		push_warning("WFC: Attempt %d failed, retrying..." % (attempt + 1))
+		for neighbor:StringName in allowed_neighbors:
+			# If more than one states allow for this neighbor, preserve the weight (picking from the highest one of the two)
+			if valid_states.has(neighbor):
+				valid_states[neighbor] = max(valid_states[neighbor], allowed_neighbors[neighbor])
+			else:
+				valid_states[neighbor] = allowed_neighbors[neighbor]
 	
-	push_error("WFC: Failed after %d tentativi. Constraints are too strict." % max_attempts)
-	return false
+	return valid_states
 
+func _get_weighted_random_state(states: Dictionary[StringName,float]) -> StringName:
+	var total_weight: float = 0.0
+	for weight: float in states.values():
+		total_weight += weight
+		
+	var roll: float = randf() * total_weight
+	var current_weight: float = 0.0
+	
+	for state: StringName in states:
+		current_weight += states[state]
+		if roll <= current_weight:
+			return state
+	
+	return states.keys()[0] # Fallback
 
-func _all_collapsed() -> bool:
-	for cell in wave:
-		if wave[cell].size() > 1:
-			return false
-	return true
-#endregion WFC
+## This function generates the 3D scene given each cell. It can accept a modified grid (given its a valid one)
+func _build_3d_structure(from_grid: Dictionary[Vector3i, Cell] = grid) -> Node3D:
+	var root: Node3D = Node3D.new()
+	root.name = "GeneratedStructure"
+	
+	var offset: float = structure.grid_size
+	
+	for pos:Vector3i in from_grid:
+		var cell: Cell = from_grid[pos]
+		if cell.final_state != structure.EMPTY_CELL and cell.final_state != &"":
+			var segment_data = structure.structure_sections[cell.final_state]
+			if segment_data.segment_scene:
+				var instance: Node = segment_data.segment_scene.instantiate()
+				root.add_child(instance)
+				# Place instance with consideraiton of the grid
+				instance.position = Vector3(pos.x * offset, pos.y * offset, pos.z * offset)
+				
+	return root

@@ -19,5 +19,3 @@ class_name StructureSegment
 @export var down: Dictionary[StringName, float] = {}
 ## What could get instanced in the +Y axis (up)
 @export var up: Dictionary[StringName, float] = {}
-## Global WFC span weight. This indicates how frequent is this room as a starting point.
-@export var spawn_weight: float = 1.0

@@ -7,6 +7,7 @@
 script = ExtResource("1_u6gd5")
 segment_scene = ExtResource("2_3fdad")
 right = Dictionary[StringName, float]({
-&"room_2": 1.0
+&"corridor": 0.2,
+&"room_2": 0.8
 })
 metadata/_custom_type_script = "uid://dld6wt4dginmo"
