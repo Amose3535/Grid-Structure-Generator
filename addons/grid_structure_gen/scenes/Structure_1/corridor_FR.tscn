@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dhtotp60f8c63"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_l6ndc"]
+size = Vector3(0.75, 0.5, 0.5)
+
+[node name="CorridorFr" type="Node3D" unique_id=1324401797]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=891761794]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13, 0, 0)
+mesh = SubResource("BoxMesh_l6ndc")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=112050943]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, -0.125)
+mesh = SubResource("BoxMesh_l6ndc")

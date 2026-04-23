@@ -9,12 +9,20 @@
 [ext_resource type="Resource" uid="uid://cllmwl8qcmhy4" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_B.tres" id="7_6ovvb"]
 [ext_resource type="Resource" uid="uid://b83l4jqpycgc2" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FB.tres" id="8_6ovvb"]
 [ext_resource type="Resource" uid="uid://oelvl5qb80fu" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FBRL.tres" id="9_ehf8s"]
+[ext_resource type="Resource" uid="uid://def66b7a1xa4y" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FL.tres" id="10_5txvy"]
+[ext_resource type="Resource" uid="uid://cqredbabkbvml" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_BR.tres" id="11_0v34l"]
+[ext_resource type="Resource" uid="uid://dmmds400jqjtm" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_BL.tres" id="12_sl8oy"]
+[ext_resource type="Resource" uid="uid://eu80gcf35xxc" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FR.tres" id="13_modr8"]
 
 [resource]
 script = ExtResource("1_0k5cb")
 structure_sections = Dictionary[StringName, ExtResource("2_x3n3p")]({
+&"corridor_BL": ExtResource("12_sl8oy"),
+&"corridor_BR": ExtResource("11_0v34l"),
 &"corridor_FB": ExtResource("8_6ovvb"),
 &"corridor_FBRL": ExtResource("9_ehf8s"),
+&"corridor_FL": ExtResource("10_5txvy"),
+&"corridor_FR": ExtResource("13_modr8"),
 &"corridor_RL": ExtResource("5_hx25g"),
 &"room_B": ExtResource("7_6ovvb"),
 &"room_F": ExtResource("6_ulj7p"),

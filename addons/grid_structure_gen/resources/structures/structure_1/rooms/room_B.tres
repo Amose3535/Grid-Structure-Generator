@@ -7,6 +7,8 @@
 script = ExtResource("1_4nqj1")
 segment_scene = ExtResource("2_78x00")
 forward = Dictionary[StringName, float]({
+&"corridor_BL": 0.1,
+&"corridor_BR": 0.1,
 &"corridor_FB": 0.29,
 &"corridor_FBRL": 0.01,
 &"room_F": 0.7

@@ -7,7 +7,9 @@
 script = ExtResource("1_tp2gg")
 segment_scene = ExtResource("2_p3i0i")
 right = Dictionary[StringName, float]({
+&"corridor_BL": 0.1,
 &"corridor_FBRL": 0.01,
+&"corridor_FL": 0.1,
 &"corridor_RL": 0.29,
 &"room_R": 0.7
 })

@@ -9,6 +9,8 @@ segment_scene = ExtResource("2_2gqqd")
 backward = Dictionary[StringName, float]({
 &"corridor_FB": 0.29,
 &"corridor_FBRL": 0.01,
+&"corridor_FL": 0.1,
+&"corridor_FR": 0.1,
 &"room_B": 0.7
 })
 metadata/_custom_type_script = "uid://dld6wt4dginmo"
