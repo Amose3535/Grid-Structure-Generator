@@ -13,6 +13,7 @@
 [ext_resource type="Resource" uid="uid://cqredbabkbvml" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_BR.tres" id="11_0v34l"]
 [ext_resource type="Resource" uid="uid://dmmds400jqjtm" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_BL.tres" id="12_sl8oy"]
 [ext_resource type="Resource" uid="uid://eu80gcf35xxc" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FR.tres" id="13_modr8"]
+[ext_resource type="Resource" uid="uid://dsoec3yko7q1o" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/join_connector.tres" id="14_sl8oy"]
 
 [resource]
 script = ExtResource("1_0k5cb")
@@ -24,6 +25,7 @@ structure_sections = Dictionary[StringName, ExtResource("2_x3n3p")]({
 &"corridor_FL": ExtResource("10_5txvy"),
 &"corridor_FR": ExtResource("13_modr8"),
 &"corridor_RL": ExtResource("5_hx25g"),
+&"join_connector": ExtResource("14_sl8oy"),
 &"room_B": ExtResource("7_6ovvb"),
 &"room_F": ExtResource("6_ulj7p"),
 &"room_L": ExtResource("4_hx25g"),

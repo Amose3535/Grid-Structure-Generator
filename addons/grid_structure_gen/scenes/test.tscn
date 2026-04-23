@@ -3,8 +3,29 @@
 [ext_resource type="Script" uid="uid://cl4fgobv4au10" path="res://addons/grid_structure_gen/scenes/test.gd" id="1_wrfgs"]
 [ext_resource type="Resource" uid="uid://dxyghsj41tay0" path="res://addons/grid_structure_gen/resources/structures/structure_1/structure_1.tres" id="2_g4yro"]
 [ext_resource type="Script" uid="uid://ticuom82hhp1" path="res://addons/grid_structure_gen/scenes/pivot.gd" id="3_l0iqv"]
+[ext_resource type="Script" uid="uid://csimrxxoduk6a" path="res://addons/grid_structure_gen/scripts/classes/processors/base_grid_processor.gd" id="3_xmmen"]
+[ext_resource type="Script" uid="uid://eu7xdlll814t" path="res://addons/grid_structure_gen/scripts/classes/processors/structure_definer.gd" id="4_3utgd"]
 [ext_resource type="Script" uid="uid://bmcyxphiu3fut" path="res://addons/grid_structure_gen/scenes/FPS_counter.gd" id="4_gpnbv"]
+[ext_resource type="Script" uid="uid://cr1xsst626ab8" path="res://addons/grid_structure_gen/scripts/classes/processors/room_culler.gd" id="4_xmmen"]
 [ext_resource type="Gradient" uid="uid://bsdxwmlxaemcd" path="res://addons/grid_structure_gen/resources/color_gradient.tres" id="5_2xsvl"]
+[ext_resource type="Script" uid="uid://bgv6v3myy5glf" path="res://addons/grid_structure_gen/scripts/classes/processors/graph_joiner.gd" id="5_3utgd"]
+[ext_resource type="Script" uid="uid://d34iuod6bowel" path="res://addons/grid_structure_gen/scenes/perspective_button.gd" id="10_bg42g"]
+
+[sub_resource type="Resource" id="Resource_3utgd"]
+script = ExtResource("4_xmmen")
+min_size = 7
+metadata/_custom_type_script = "uid://cr1xsst626ab8"
+
+[sub_resource type="Resource" id="Resource_cc2p2"]
+script = ExtResource("5_3utgd")
+join_count = 3
+connector_state = &"join_connector"
+max_path_length = 4
+metadata/_custom_type_script = "uid://bgv6v3myy5glf"
+
+[sub_resource type="Resource" id="Resource_bg42g"]
+script = ExtResource("4_3utgd")
+metadata/_custom_type_script = "uid://eu7xdlll814t"
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g4yro"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -42,7 +63,8 @@ albedo_color = Color(0, 0.47843137, 1, 1)
 [node name="Test" type="Node3D" unique_id=457018281]
 script = ExtResource("1_wrfgs")
 test_structure = ExtResource("2_g4yro")
-structure_size = Vector3i(25, 1, 25)
+structure_size = Vector3i(20, 1, 20)
+post_processors = Array[ExtResource("3_xmmen")]([SubResource("Resource_3utgd"), SubResource("Resource_cc2p2"), SubResource("Resource_bg42g")])
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]
 environment = SubResource("Environment_gpnbv")
@@ -93,7 +115,8 @@ zoom_sensitivity = 0.5
 camera = NodePath("Camera3D")
 
 [node name="Camera3D" type="Camera3D" parent="Pivot" unique_id=620215085]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24.8)
+size = 20.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=162327725]
 
@@ -135,5 +158,16 @@ scroll_active = false
 script = ExtResource("4_gpnbv")
 color_gradient = ExtResource("5_2xsvl")
 metadata/_custom_type_script = "uid://bmcyxphiu3fut"
+
+[node name="PerspectiveButton" type="Button" parent="CanvasLayer/Control/Control" unique_id=955423423]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -244.0
+offset_bottom = 41.0
+grow_horizontal = 0
+text = "Perspective mode: Perspective"
+script = ExtResource("10_bg42g")
 
 [connection signal="pressed" from="CanvasLayer/Control/Control/Re_Generate_button" to="." method="_on_regenerate_button_pressed"]

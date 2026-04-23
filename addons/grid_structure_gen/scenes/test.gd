@@ -4,9 +4,10 @@ extends Node3D
 
 @export var test_structure: Structure = null
 @export var structure_size: Vector3i = Vector3i(5,5,5)
-@export var center_structure: bool = true
-
+@export var pre_processors: Array[GridProcessorBaseType] = []
+@export var post_processors: Array[GridProcessorBaseType] = []
 @export var generate_async: bool = true
+@export var center_structure: bool = true
 
 
 var structure_origin: Node3D = null
@@ -27,23 +28,24 @@ func _ready() -> void:
 func _generate_structure() -> void:
 	if !structure_origin: return
 	
-	var generator: StructureGenerator = StructureGenerator.new(test_structure, structure_size)
+	var node: Node3D = null
 	
-	
-	var modified_grid: Dictionary[Vector3i, StructureGenerator.Cell]
 	if generate_async:
-		WorkerThreadPool.add_task(generator.generate_async) # Asynchronous approach
-		modified_grid = await generator.generation_finished
-		_clear_children()
+		var pipeline: StructurePipeline = StructurePipeline.new(test_structure, structure_size)
+		for pre_processor:GridProcessorBaseType in pre_processors:
+			pipeline.add_pre_processor(pre_processor)
+		for post_processor:GridProcessorBaseType in post_processors:
+			pipeline.add_post_processor(post_processor)
+		node = await pipeline.run()
 	else:
-		modified_grid = generator.generate() # Synchronous approach
+		var pipeline: StructurePipeline = StructurePipeline.new(test_structure, structure_size)
+		node = await pipeline.run(false)
 	
-	# Insert post processing here <-
-	var outcome: Node3D = generator._build_3d_structure(modified_grid)
-	if outcome:
-		structure_origin.add_child(outcome)
+	if node:
+		_clear_children()
+		structure_origin.add_child(node)
 	else:
-		print("Generazione fallita")
+		push_error("Generation failed :(")
 
 
 func _clear_children() -> void:

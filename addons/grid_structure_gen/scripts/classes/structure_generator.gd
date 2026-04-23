@@ -31,16 +31,18 @@ const OPPOSITE_DIRS = {
 ## Logic grid that maps Vector3i to the cells
 var grid: Dictionary[Vector3i, Cell] = {}
 
-## Pre-computed matrix of all the rules[br]
-## FORMAT: rules[stato_A][direzione] = { stato_B: peso } (=> Dictionary[StringName, Dictionary[StringName, Dictionary[StringName, float]]])
+## Pre-computed matrix of all the rules
+## FORMAT: rules[stato_A][direzione] = { stato_B: peso }
 var rules: Dictionary[StringName,Dictionary] = {}
+
+##M in-Heap for entropy tracking.[br]
+## Stores [entropy, cell_pos] so we can always get the lowest entropy cell in O(log n).
+var _entropy_heap: Array = []
 
 ## Internal cell class
 class Cell:
-	## The relative position in the structure coordinates
 	var position: Vector3i
-	## 
-	var possible_states: Dictionary[StringName, float] # StringName : float (weight)
+	var possible_states: Dictionary[StringName, float]
 	var is_collapsed: bool = false
 	var final_state: StringName = &""
 	
@@ -51,52 +53,45 @@ class Cell:
 func _init(_structure: Structure, _bounds: Vector3i):
 	structure = _structure
 	grid_bounds = _bounds
-	_build_rules() # Pre-compute logical connections before building the grid
+	_build_rules()
 	_initialize_grid()
+
 
 func _build_rules():
 	var all_states: Array[StringName] = structure.structure_sections.keys().duplicate()
 	all_states.append(structure.EMPTY_CELL)
 	
-	# Create empty structure
 	for state: StringName in all_states:
 		rules[state] = {}
 		for dir in DIR_VECTORS.values():
 			rules[state][dir] = {}
 			
-	# Populate rules based on segments.
 	for state in structure.structure_sections.keys():
 		var segment: StructureSegment = structure.structure_sections[state]
 		for dir in DIR_VECTORS.values():
 			var connections = segment.get(dir)
-			
-			# IF nothing is defined, by assumption, it should connect to EMPTY
 			if connections == null or connections.is_empty():
 				rules[state][dir][structure.EMPTY_CELL] = 1.0
 			else:
 				for neighbor in connections:
 					rules[state][dir][neighbor] = connections[neighbor]
 					
-	# Ruleset for EMPTY cells: EMPTY always connects to EMPTY (IMPORTANT TO PREVENT ERRORS!!!!!!)
 	for dir:StringName in DIR_VECTORS.values():
 		rules[structure.EMPTY_CELL][dir][structure.EMPTY_CELL] = 1.0
 		
-	# Automatically force symmetry: If A wants B on its side, then  be should want A on the opposite side too (even if the user didn't define it) to prevent errors
 	for state_A in all_states:
 		for dir in rules[state_A]:
 			var opposite_dir = OPPOSITE_DIRS[dir]
 			for state_B in rules[state_A][dir]:
 				var weight = rules[state_A][dir][state_B]
-				
 				if not rules[state_B][opposite_dir].has(state_A):
 					rules[state_B][opposite_dir][state_A] = weight
 
 func _initialize_grid():
-	# Make a dictionary with all states and their initial weights (assume 1.0 if not specified otherwise)
 	var all_states: Dictionary[StringName, float] = {}
 	for key:StringName in structure.structure_sections.keys():
 		all_states[key] = 1.0
-	all_states[structure.EMPTY_CELL] = 1.0 # EMPTY is a valid state too
+	all_states[structure.EMPTY_CELL] = 1.0
 	
 	for x:int in range(grid_bounds.x):
 		for y:int in range(grid_bounds.y):
@@ -106,120 +101,106 @@ func _initialize_grid():
 				cell.position = pos
 				cell.possible_states = all_states.duplicate()
 				grid[pos] = cell
-
-## Function responsible for the WFC argorithm
-func generate() -> Dictionary[Vector3i,Cell]:
-	_place_seed_tile()
 	
-	while true:
-		var cell_to_collapse: Cell = _get_lowest_entropy_cell()
-		
-		# If there are no more cells to collapse, then it's done and the generation should stop
-		if cell_to_collapse == null:
-			break
-			
-		# If entropy == 0, there's a contradiction.
-		# NOTE: Should backtrack but who cares am i right fellas?.
-		if cell_to_collapse.get_entropy() == 0:
-			push_error("WFC Contradiction at: ", cell_to_collapse.position)
-			return {}
-		
-		_collapse_cell(cell_to_collapse)
-		_propagate(cell_to_collapse)
-		
-	return grid
-
-## Function used to initialize the generator function with a random seed. If every seed has the same weight, or they are all set to 0, then WFC will choose randomly
-func _place_seed_tile() -> void:
-	# Decide where to place the seed. Usually the middle is a good average result.
-	var start_pos: Vector3i = Vector3i(grid_bounds.x / 2, 0, grid_bounds.z / 2)
-	
-	if not grid.has(start_pos):
-		return
-	
-	var start_cell: Cell = grid[start_pos]
-	
-	# Get the total weights of each segment of this structure
-	var total_seed_weight: float = 0.0
-	var available_seeds: Dictionary = {}
-	for state_name in structure.structure_sections.keys():
-		var segment: StructureSegment = structure.structure_sections[state_name]
-		if segment.seed_weight > 0.0:
-			available_seeds[state_name] = segment.seed_weight
-			total_seed_weight += segment.seed_weight
-	
-	# If the total weight is zero, let WFC get a completely random one (potentially weird result)
-	if total_seed_weight <= 0.0:
-		return
-	
-	# Random weighted roll
-	var roll = randf() * total_seed_weight
-	var current_weight: float = 0.0
-	var chosen_seed: StringName = &""
-	
-	for state_name in available_seeds:
-		current_weight += available_seeds[state_name]
-		if roll <= current_weight:
-			chosen_seed = state_name
-			break
-	
-	# Collapse initial cell with chosen seed
-	start_cell.is_collapsed = true
-	start_cell.final_state = chosen_seed
-	start_cell.possible_states = { chosen_seed: 1.0 }
-	
-	# Propagate to neighbors
-	_propagate(start_cell)
-
-## If you plan on using multithreading, CALL THIS function instead of generate() as that one won't emit the necessary signal
-func generate_async() -> void:
-	# Wraps generate function
-	var grid_result: Dictionary[Vector3i,Cell] = generate() 
-	
-	# Emit signal containing the necessary grid result
-	emit_signal.call_deferred("generation_finished", grid_result)
+	# Build the initial heap with all cells
+	_rebuild_entropy_heap()
 
 
-
-
-## Function responsible for WFC logic
-func _get_lowest_entropy_cell() -> Cell:
-	var min_entropy: int = 999999
-	var best_cells: Array[Cell] = []
-	
-	for pos:Vector3i in grid:
+#region Min-Heap
+func _rebuild_entropy_heap() -> void:
+	_entropy_heap.clear()
+	for pos in grid:
 		var cell: Cell = grid[pos]
 		if not cell.is_collapsed:
-			var entropy: int = cell.get_entropy()
-			if entropy < min_entropy:
-				min_entropy = entropy
-				best_cells = [cell]
-			elif entropy == min_entropy:
-				best_cells.append(cell)
-				
-	if best_cells.is_empty():
-		return null
-		
-	# Choose random cell within the ones with minimum entropy
-	return best_cells.pick_random()
+			_heap_push([cell.get_entropy(), pos])
 
-func _collapse_cell(cell: Cell):
-	var chosen_state: StringName = _get_weighted_random_state(cell.possible_states)
+func _heap_push(item: Array) -> void:
+	_entropy_heap.push_back(item)
+	var i: int = _entropy_heap.size() - 1
+	while i > 0:
+		var parent: int = (i - 1) / 2
+		if _entropy_heap[parent][0] > _entropy_heap[i][0]:
+			var tmp = _entropy_heap[parent]
+			_entropy_heap[parent] = _entropy_heap[i]
+			_entropy_heap[i] = tmp
+			i = parent
+		else:
+			break
+
+func _heap_pop() -> Array:
+	if _entropy_heap.is_empty():
+		return []
+	var top = _entropy_heap[0]
+	var last = _entropy_heap.pop_back()
+	if not _entropy_heap.is_empty():
+		_entropy_heap[0] = last
+		var i: int = 0
+		while true:
+			var smallest: int = i
+			var l: int = 2 * i + 1
+			var r: int = 2 * i + 2
+			if l < _entropy_heap.size() and _entropy_heap[l][0] < _entropy_heap[smallest][0]:
+				smallest = l
+			if r < _entropy_heap.size() and _entropy_heap[r][0] < _entropy_heap[smallest][0]:
+				smallest = r
+			if smallest == i:
+				break
+			var tmp = _entropy_heap[smallest]
+			_entropy_heap[smallest] = _entropy_heap[i]
+			_entropy_heap[i] = tmp
+			i = smallest
+	return top
+#endregion Min-Heap
+
+
+## Get lowest entropy uncollapsed cell using the heap. Stale entries (already collapsed or outdated entropy) are skipped lazily.
+func _get_lowest_entropy_cell() -> Cell:
+	while not _entropy_heap.is_empty():
+		var top: Array = _heap_pop()
+		var pos: Vector3i = top[1]
+		if not grid.has(pos):
+			continue
+		var cell: Cell = grid[pos]
+		# Skip stale entries: collapsed or entropy changed since insertion
+		if cell.is_collapsed:
+			continue
+		if cell.get_entropy() != top[0]:
+			# Re-insert with the current entropy and keep looking
+			_heap_push([cell.get_entropy(), pos])
+			continue
+		return cell
+	return null
+
+
+## Restores all states that were removed during a propagation step.
+func _undo_diff(removed_states: Array) -> void:
+	for entry in removed_states:
+		var cell: Cell = grid[entry.pos]
+		cell.possible_states[entry.state] = entry.weight
+		# If the cell was left with 0 states it may have been marked; unmark it
+		if cell.is_collapsed and cell.get_entropy() > 1:
+			cell.is_collapsed = false
+			cell.final_state = &""
+
+
+func _collapse_cell(cell: Cell, provided_state: StringName) -> void:
 	cell.is_collapsed = true
-	cell.final_state = chosen_state
-	# Remove every other state other than the chosen one
-	cell.possible_states = { chosen_state: cell.possible_states[chosen_state] }
+	cell.final_state = provided_state
+	cell.possible_states = { provided_state: cell.possible_states[provided_state] }
 
-func _propagate(start_cell: Cell):
+
+## _propagate records every removal as a diff entry,and uses a Dictionary-based visited set (instead of Array.has())
+func _propagate(start_cell: Cell, removed_states: Array) -> void:
 	var stack: Array[Cell] = [start_cell]
+	# Dictionary as O(1) visited set instead of Array.has() O(n)
+	var in_stack: Dictionary = { start_cell.position: true }
 	
 	while not stack.is_empty():
 		var current_cell: Cell = stack.pop_back()
+		in_stack.erase(current_cell.position)
 		
 		for dir_vec: Vector3i in DIR_VECTORS:
 			var neighbor_pos: Vector3i = current_cell.position + dir_vec
-			
-			# Chech if the neighbor is within the grid
 			if not grid.has(neighbor_pos):
 				continue
 				
@@ -228,35 +209,41 @@ func _propagate(start_cell: Cell):
 				continue
 				
 			var dir_name: StringName = DIR_VECTORS[dir_vec]
-			var possible_neighbor_states_now: Dictionary = _get_valid_neighbors_for_states(current_cell.possible_states.keys(), dir_name)
+			var possible_neighbor_states_now: Dictionary = _get_valid_neighbors_for_states(
+				current_cell.possible_states.keys(), dir_name
+			)
 			
-			var changed = false
-			# Chech the neghbor' states: If they aren't allowed by the current cell, delete them
+			var changed: bool = false
 			for state in neighbor.possible_states.keys().duplicate():
 				if not possible_neighbor_states_now.has(state):
+					# OPT 1: Record the removal in the diff before erasing
+					removed_states.append({
+						"pos": neighbor_pos,
+						"state": state,
+						"weight": neighbor.possible_states[state]
+					})
 					neighbor.possible_states.erase(state)
 					changed = true
-					
-			# If the neighbor has changed its posible states, it must propagate
-			if changed and not stack.has(neighbor):
-				stack.append(neighbor)
+			
+			if changed:
+				# Push updated entropy into heap
+				_heap_push([neighbor.get_entropy(), neighbor_pos])
+				if not in_stack.has(neighbor_pos):
+					in_stack[neighbor_pos] = true
+					stack.append(neighbor)
 
-## Helps propagate to find the valid neighbor states
+
 func _get_valid_neighbors_for_states(current_states: Array[StringName], dir_name: String) -> Dictionary:
 	var valid_states: Dictionary = {}
-	
 	for state: StringName in current_states:
-		# Pick allowed neighbors from the rule matrix
-		var allowed_neighbors: Dictionary = (rules[state][dir_name])
-		
-		for neighbor:StringName in allowed_neighbors:
-			# If more than one states allow for this neighbor, preserve the weight (picking from the highest one of the two)
+		var allowed_neighbors: Dictionary = rules[state][dir_name]
+		for neighbor: StringName in allowed_neighbors:
 			if valid_states.has(neighbor):
 				valid_states[neighbor] = max(valid_states[neighbor], allowed_neighbors[neighbor])
 			else:
 				valid_states[neighbor] = allowed_neighbors[neighbor]
-	
 	return valid_states
+
 
 func _get_weighted_random_state(states: Dictionary[StringName,float]) -> StringName:
 	var total_weight: float = 0.0
@@ -271,13 +258,137 @@ func _get_weighted_random_state(states: Dictionary[StringName,float]) -> StringN
 		if roll <= current_weight:
 			return state
 	
-	return states.keys()[0] # Fallback
+	return states.keys()[0]
 
-## This function generates the 3D scene given each cell. It can accept a modified grid (given its a valid one)
+
+func _place_seed_tile() -> void:
+	var start_pos: Vector3i = Vector3i(grid_bounds.x / 2, 0, grid_bounds.z / 2)
+	if not grid.has(start_pos):
+		return
+	
+	var start_cell: Cell = grid[start_pos]
+	var total_seed_weight: float = 0.0
+	var available_seeds: Dictionary = {}
+	
+	for state_name in structure.structure_sections.keys():
+		var segment: StructureSegment = structure.structure_sections[state_name]
+		if segment.seed_weight > 0.0:
+			available_seeds[state_name] = segment.seed_weight
+			total_seed_weight += segment.seed_weight
+	
+	if total_seed_weight <= 0.0:
+		return
+	
+	var roll = randf() * total_seed_weight
+	var current_weight: float = 0.0
+	var chosen_seed: StringName = &""
+	
+	for state_name in available_seeds:
+		current_weight += available_seeds[state_name]
+		if roll <= current_weight:
+			chosen_seed = state_name
+			break
+	
+	start_cell.is_collapsed = true
+	start_cell.final_state = chosen_seed
+	start_cell.possible_states = { chosen_seed: 1.0 }
+	
+	var dummy_removed: Array = []
+	_propagate(start_cell, dummy_removed)
+	# Seed propagation changes are not tracked for backtracking (seed is fixed)
+
+## Generates the grid structure.[br]It records the states that were removed during each propagation step. When a contradiction is found, it undoes it simply by putting them back. 
+func generate() -> Dictionary:
+	_place_seed_tile()
+	
+	# Each history entry: { cell_pos, chosen_state, removed_states }
+	# removed_states: Array of { pos: Vector3i, state: StringName, weight: float }
+	var history: Array = []
+	var max_backtracks: int = 10000
+	var backtracks_done: int = 0
+	
+	# Generation iterative notation of recursive implementation for WFC
+	while true:
+		var cell_to_collapse: Cell = _get_lowest_entropy_cell()
+		
+		if cell_to_collapse == null:
+			break
+		
+		#region CONTRADICTION
+		if cell_to_collapse.get_entropy() == 0:
+			push_error("WFC Contradiction at: %s. BACKTRACKING!" % str(cell_to_collapse.position))
+			backtracks_done += 1
+			if backtracks_done > max_backtracks:
+				push_error("Max backtracks reached!")
+				return {}
+			
+			var backtracked: bool = false
+			
+			while history.size() > 0:
+				var last_step: Dictionary = history.pop_back()
+				
+				# Undo only the changes from this step
+				_undo_diff(last_step.removed_states)
+				
+				# Uncollapse the cell that was collapsed in this step
+				var past_cell: Cell = grid[last_step.cell_pos]
+				past_cell.is_collapsed = false
+				past_cell.final_state = &""
+				# The undo restored all its states; now ban the bad choice
+				past_cell.possible_states.erase(last_step.chosen_state)
+				
+				if past_cell.get_entropy() > 0:
+					var new_choice: StringName = _get_weighted_random_state(past_cell.possible_states)
+					var removed: Array = []
+					
+					past_cell.is_collapsed = true
+					past_cell.final_state = new_choice
+					past_cell.possible_states = { new_choice: past_cell.possible_states[new_choice] }
+					
+					_propagate(past_cell, removed)
+					history.push_back({
+						"cell_pos": past_cell.position,
+						"chosen_state": new_choice,
+						"removed_states": removed
+					})
+					# Re-push the past_cell into the heap after state change
+					_heap_push([past_cell.get_entropy(), past_cell.position])
+					backtracked = true
+					break
+			
+			if not backtracked:
+				push_error("Fallimento totale: nessuna configurazione valida rimasta.")
+				return {}
+			
+			continue
+		#endregion CONTRADICTION
+		
+		#region Normal collapse
+		var chosen_state: StringName = _get_weighted_random_state(cell_to_collapse.possible_states)
+		var removed: Array = []
+		
+		_collapse_cell(cell_to_collapse, chosen_state)
+		_propagate(cell_to_collapse, removed)
+		
+		history.push_back({
+			"cell_pos": cell_to_collapse.position,
+			"chosen_state": chosen_state,
+			"removed_states": removed
+		})
+		#region Normal collapse
+	
+	return grid
+
+## If you plan on using multithreading, CALL THIS function instead of generate()
+func generate_async() -> void:
+	var grid_result: Dictionary[Vector3i,Cell] = generate()
+	emit_signal.call_deferred("generation_finished", grid_result)
+
+
+## This function generates the 3D scene given each cell.
 func _build_3d_structure(from_grid: Dictionary[Vector3i, Cell] = grid) -> Node3D:
 	var root: Node3D = Node3D.new()
 	root.name = "GeneratedStructure"
-	
 	var offset: float = structure.grid_size
 	
 	for pos:Vector3i in from_grid:
@@ -287,7 +398,6 @@ func _build_3d_structure(from_grid: Dictionary[Vector3i, Cell] = grid) -> Node3D
 			if segment_data.segment_scene:
 				var instance: Node = segment_data.segment_scene.instantiate()
 				root.add_child(instance)
-				# Place instance with consideraiton of the grid
 				instance.position = Vector3(pos.x * offset, pos.y * offset, pos.z * offset)
 				
 	return root

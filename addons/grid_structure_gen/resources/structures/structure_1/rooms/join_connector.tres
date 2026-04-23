@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="StructureSegment" format=3 uid="uid://dsoec3yko7q1o"]
+
+[ext_resource type="Script" uid="uid://dld6wt4dginmo" path="res://addons/grid_structure_gen/scripts/classes/structure_segment.gd" id="1_y700r"]
+[ext_resource type="PackedScene" uid="uid://c3ygxmd0wrgp1" path="res://addons/grid_structure_gen/scenes/Structure_1/join_connector.tscn" id="2_nwihf"]
+
+[resource]
+script = ExtResource("1_y700r")
+segment_scene = ExtResource("2_nwihf")
+seed_weight = 0.0
+metadata/_custom_type_script = "uid://dld6wt4dginmo"

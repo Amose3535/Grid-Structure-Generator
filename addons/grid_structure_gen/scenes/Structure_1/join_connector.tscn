@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://c3ygxmd0wrgp1"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_uua42"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4xs06"]
+albedo_color = Color(0.5568628, 0, 0.61960787, 1)
+
+[node name="JoinConnector" type="Node3D" unique_id=1108447714]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1679290825]
+mesh = SubResource("SphereMesh_uua42")
+surface_material_override/0 = SubResource("StandardMaterial3D_4xs06")

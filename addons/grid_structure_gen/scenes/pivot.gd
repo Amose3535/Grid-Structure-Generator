@@ -8,6 +8,7 @@ extends Node3D
 @export var camera_lerp_speed: float = 10
 
 var target_camera_pos: Vector3 = Vector3.ZERO
+var target_camera_size: float = 20.0
 var target_rot: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
@@ -30,10 +31,18 @@ func _process(delta: float) -> void:
 	
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		if Input.is_action_just_pressed("scroll_in"):
-			target_camera_pos.z -= 1*zoom_sensitivity
-			if target_camera_pos.z <= 0: target_camera_pos.z = 0
+			if camera.projection == Camera3D.PROJECTION_PERSPECTIVE:
+				target_camera_pos.z -= 1*zoom_sensitivity
+				if target_camera_pos.z <= 0: target_camera_pos.z = 0
+			elif camera.projection == Camera3D.PROJECTION_ORTHOGONAL:
+				target_camera_size -= 1*zoom_sensitivity
+				if target_camera_size <= 0: target_camera_size = 0
 		if Input.is_action_just_pressed("scroll_out"):
-			target_camera_pos.z += 1*zoom_sensitivity
+			if camera.projection == Camera3D.PROJECTION_PERSPECTIVE:
+				target_camera_pos.z += 1*zoom_sensitivity
+			elif camera.projection == Camera3D.PROJECTION_ORTHOGONAL:
+				target_camera_size += 1*zoom_sensitivity
 	
 	camera.position = lerp(camera.position, target_camera_pos, camera_lerp_speed*delta)
+	camera.size = lerp(camera.size, target_camera_size, camera_lerp_speed*delta)
 	rotation = lerp(rotation, target_rot, camera_lerp_speed*delta)
