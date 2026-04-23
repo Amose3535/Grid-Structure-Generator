@@ -109,6 +109,8 @@ func _initialize_grid():
 
 ## Function responsible for the WFC argorithm
 func generate() -> Dictionary[Vector3i,Cell]:
+	_place_seed_tile()
+	
 	while true:
 		var cell_to_collapse: Cell = _get_lowest_entropy_cell()
 		
@@ -121,11 +123,53 @@ func generate() -> Dictionary[Vector3i,Cell]:
 		if cell_to_collapse.get_entropy() == 0:
 			push_error("WFC Contradiction at: ", cell_to_collapse.position)
 			return {}
-			
+		
 		_collapse_cell(cell_to_collapse)
 		_propagate(cell_to_collapse)
 		
 	return grid
+
+## Function used to initialize the generator function with a random seed. If every seed has the same weight, or they are all set to 0, then WFC will choose randomly
+func _place_seed_tile() -> void:
+	# Decide where to place the seed. Usually the middle is a good average result.
+	var start_pos: Vector3i = Vector3i(grid_bounds.x / 2, 0, grid_bounds.z / 2)
+	
+	if not grid.has(start_pos):
+		return
+	
+	var start_cell: Cell = grid[start_pos]
+	
+	# Get the total weights of each segment of this structure
+	var total_seed_weight: float = 0.0
+	var available_seeds: Dictionary = {}
+	for state_name in structure.structure_sections.keys():
+		var segment: StructureSegment = structure.structure_sections[state_name]
+		if segment.seed_weight > 0.0:
+			available_seeds[state_name] = segment.seed_weight
+			total_seed_weight += segment.seed_weight
+	
+	# If the total weight is zero, let WFC get a completely random one (potentially weird result)
+	if total_seed_weight <= 0.0:
+		return
+	
+	# Random weighted roll
+	var roll = randf() * total_seed_weight
+	var current_weight: float = 0.0
+	var chosen_seed: StringName = &""
+	
+	for state_name in available_seeds:
+		current_weight += available_seeds[state_name]
+		if roll <= current_weight:
+			chosen_seed = state_name
+			break
+	
+	# Collapse initial cell with chosen seed
+	start_cell.is_collapsed = true
+	start_cell.final_state = chosen_seed
+	start_cell.possible_states = { chosen_seed: 1.0 }
+	
+	# Propagate to neighbors
+	_propagate(start_cell)
 
 ## If you plan on using multithreading, CALL THIS function instead of generate() as that one won't emit the necessary signal
 func generate_async() -> void:

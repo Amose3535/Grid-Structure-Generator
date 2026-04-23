@@ -7,6 +7,9 @@ class_name StructureSegment
 @export var segment_scene: PackedScene = null
 
 @export_group("Generation criteria")
+## The chances that this segment is chosen as seed for the WFC. (if it's seto to 0, then it will never be chosen as starting tile)
+@export var seed_weight: float = 1.0
+@export_subgroup("Directional Segments")
 ## What could get instanced in the -Z axis (forward)
 @export var forward: Dictionary[StringName, float] = {}
 ## What could get instanced in the +Z axis (backward)
