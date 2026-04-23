@@ -1,4 +1,6 @@
 extends RichTextLabel
+class_name FPSCounter
+## Handy class used to visually keep track of FPS in your game. Useful for debugging. 
 
 ## How often should the label update
 @export var update_interval: float = 0.333

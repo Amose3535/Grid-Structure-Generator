@@ -125,7 +125,7 @@ grow_horizontal = 0
 grow_vertical = 0
 text = "Re-generate"
 
-[node name="FPS_counter" type="RichTextLabel" parent="CanvasLayer/Control/Control" unique_id=1147405380]
+[node name="FPS_counter" type="RichTextLabel" parent="CanvasLayer/Control/Control" unique_id=1193356745]
 layout_mode = 0
 offset_right = 151.0
 offset_bottom = 125.0
