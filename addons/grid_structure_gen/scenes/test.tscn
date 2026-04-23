@@ -42,7 +42,7 @@ albedo_color = Color(0, 0.47843137, 1, 1)
 [node name="Test" type="Node3D" unique_id=457018281]
 script = ExtResource("1_wrfgs")
 test_structure = ExtResource("2_g4yro")
-structure_size = Vector3i(20, 1, 20)
+structure_size = Vector3i(25, 1, 25)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]
 environment = SubResource("Environment_gpnbv")
@@ -89,6 +89,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_2xsvl")
 [node name="Pivot" type="Node3D" parent="." unique_id=652139535 node_paths=PackedStringArray("camera")]
 script = ExtResource("3_l0iqv")
 sensitivity = Vector2(0.005, 0.005)
+zoom_sensitivity = 0.5
 camera = NodePath("Camera3D")
 
 [node name="Camera3D" type="Camera3D" parent="Pivot" unique_id=620215085]

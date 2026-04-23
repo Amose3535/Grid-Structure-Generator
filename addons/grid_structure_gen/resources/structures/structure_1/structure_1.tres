@@ -2,16 +2,23 @@
 
 [ext_resource type="Script" uid="uid://dre8og3ttstbp" path="res://addons/grid_structure_gen/scripts/classes/structure.gd" id="1_0k5cb"]
 [ext_resource type="Script" uid="uid://dld6wt4dginmo" path="res://addons/grid_structure_gen/scripts/classes/structure_segment.gd" id="2_x3n3p"]
-[ext_resource type="Resource" uid="uid://dek06fxd7i8hn" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_1.tres" id="3_uh1m0"]
-[ext_resource type="Resource" uid="uid://d1y132t0pa1rj" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_2.tres" id="4_hx25g"]
-[ext_resource type="Resource" uid="uid://c3657t25utggd" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor.tres" id="5_hx25g"]
+[ext_resource type="Resource" uid="uid://dek06fxd7i8hn" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_L.tres" id="4_hx25g"]
+[ext_resource type="Resource" uid="uid://c3657t25utggd" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_RL.tres" id="5_hx25g"]
+[ext_resource type="Resource" uid="uid://d1y132t0pa1rj" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_R.tres" id="5_psjhi"]
+[ext_resource type="Resource" uid="uid://cn521u0krufqe" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_F.tres" id="6_ulj7p"]
+[ext_resource type="Resource" uid="uid://cllmwl8qcmhy4" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_B.tres" id="7_6ovvb"]
+[ext_resource type="Resource" uid="uid://b83l4jqpycgc2" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FB.tres" id="8_6ovvb"]
+[ext_resource type="Resource" uid="uid://oelvl5qb80fu" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FBRL.tres" id="9_ehf8s"]
 
 [resource]
 script = ExtResource("1_0k5cb")
-grid_size = 0.99
 structure_sections = Dictionary[StringName, ExtResource("2_x3n3p")]({
-&"corridor": ExtResource("5_hx25g"),
-&"room_1": ExtResource("3_uh1m0"),
-&"room_2": ExtResource("4_hx25g")
+&"corridor_FB": ExtResource("8_6ovvb"),
+&"corridor_FBRL": ExtResource("9_ehf8s"),
+&"corridor_RL": ExtResource("5_hx25g"),
+&"room_B": ExtResource("7_6ovvb"),
+&"room_F": ExtResource("6_ulj7p"),
+&"room_L": ExtResource("4_hx25g"),
+&"room_R": ExtResource("5_psjhi")
 })
 metadata/_custom_type_script = "uid://dre8og3ttstbp"
