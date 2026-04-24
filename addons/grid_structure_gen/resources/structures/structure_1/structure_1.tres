@@ -2,31 +2,39 @@
 
 [ext_resource type="Script" uid="uid://dre8og3ttstbp" path="res://addons/grid_structure_gen/scripts/classes/structure.gd" id="1_0k5cb"]
 [ext_resource type="Script" uid="uid://dld6wt4dginmo" path="res://addons/grid_structure_gen/scripts/classes/structure_segment.gd" id="2_x3n3p"]
-[ext_resource type="Resource" uid="uid://dek06fxd7i8hn" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_L.tres" id="4_hx25g"]
-[ext_resource type="Resource" uid="uid://c3657t25utggd" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_RL.tres" id="5_hx25g"]
-[ext_resource type="Resource" uid="uid://d1y132t0pa1rj" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_R.tres" id="5_psjhi"]
-[ext_resource type="Resource" uid="uid://cn521u0krufqe" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_F.tres" id="6_ulj7p"]
-[ext_resource type="Resource" uid="uid://cllmwl8qcmhy4" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/room_B.tres" id="7_6ovvb"]
-[ext_resource type="Resource" uid="uid://b83l4jqpycgc2" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FB.tres" id="8_6ovvb"]
-[ext_resource type="Resource" uid="uid://oelvl5qb80fu" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FBRL.tres" id="9_ehf8s"]
-[ext_resource type="Resource" uid="uid://def66b7a1xa4y" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FL.tres" id="10_5txvy"]
-[ext_resource type="Resource" uid="uid://cqredbabkbvml" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_BR.tres" id="11_0v34l"]
-[ext_resource type="Resource" uid="uid://dmmds400jqjtm" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_BL.tres" id="12_sl8oy"]
-[ext_resource type="Resource" uid="uid://eu80gcf35xxc" path="res://addons/grid_structure_gen/resources/structures/structure_1/rooms/corridor_FR.tres" id="13_modr8"]
+[ext_resource type="Resource" uid="uid://dmmds400jqjtm" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/L_shaped/corridor_BL.tres" id="3_jv8gr"]
+[ext_resource type="Resource" uid="uid://cqredbabkbvml" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/L_shaped/corridor_BR.tres" id="4_pvd8l"]
+[ext_resource type="Resource" uid="uid://b83l4jqpycgc2" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/I_shaped/corridor_FB.tres" id="5_68pho"]
+[ext_resource type="Resource" uid="uid://oelvl5qb80fu" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/+_shaped/corridor_FBRL.tres" id="6_r0dwh"]
+[ext_resource type="Resource" uid="uid://def66b7a1xa4y" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/L_shaped/corridor_FL.tres" id="7_k5gfx"]
+[ext_resource type="Resource" uid="uid://eu80gcf35xxc" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/L_shaped/corridor_FR.tres" id="8_v1mos"]
+[ext_resource type="Resource" uid="uid://c3657t25utggd" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/I_shaped/corridor_RL.tres" id="9_m4no4"]
+[ext_resource type="Resource" uid="uid://cllmwl8qcmhy4" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/rooms/room_B.tres" id="10_qyw8t"]
+[ext_resource type="Resource" uid="uid://cn521u0krufqe" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/rooms/room_F.tres" id="11_s4n2d"]
+[ext_resource type="Resource" uid="uid://dek06fxd7i8hn" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/rooms/room_L.tres" id="12_2krrd"]
+[ext_resource type="Resource" uid="uid://d1y132t0pa1rj" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/rooms/room_R.tres" id="13_idgj3"]
+[ext_resource type="Resource" uid="uid://cuin735ujllvk" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/T_shaped/corridor_FBL.tres" id="14_74g8k"]
+[ext_resource type="Resource" uid="uid://can50tlnv5g48" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/T_shaped/corridor_FBR.tres" id="15_l3vbr"]
+[ext_resource type="Resource" uid="uid://d2wht5y7bl0et" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/T_shaped/corridor_BRL.tres" id="16_kujuk"]
+[ext_resource type="Resource" uid="uid://cqg34m0is0uha" path="res://addons/grid_structure_gen/resources/structures/structure_1/segments/corridors/T_shaped/corridor_FRL.tres" id="17_j7cod"]
 
 [resource]
 script = ExtResource("1_0k5cb")
 structure_sections = Dictionary[StringName, ExtResource("2_x3n3p")]({
-&"corridor_BL": ExtResource("12_sl8oy"),
-&"corridor_BR": ExtResource("11_0v34l"),
-&"corridor_FB": ExtResource("8_6ovvb"),
-&"corridor_FBRL": ExtResource("9_ehf8s"),
-&"corridor_FL": ExtResource("10_5txvy"),
-&"corridor_FR": ExtResource("13_modr8"),
-&"corridor_RL": ExtResource("5_hx25g"),
-&"room_B": ExtResource("7_6ovvb"),
-&"room_F": ExtResource("6_ulj7p"),
-&"room_L": ExtResource("4_hx25g"),
-&"room_R": ExtResource("5_psjhi")
+&"corridor_BL": ExtResource("3_jv8gr"),
+&"corridor_BR": ExtResource("4_pvd8l"),
+&"corridor_BRL": ExtResource("16_kujuk"),
+&"corridor_FB": ExtResource("5_68pho"),
+&"corridor_FBL": ExtResource("14_74g8k"),
+&"corridor_FBR": ExtResource("15_l3vbr"),
+&"corridor_FBRL": ExtResource("6_r0dwh"),
+&"corridor_FL": ExtResource("7_k5gfx"),
+&"corridor_FR": ExtResource("8_v1mos"),
+&"corridor_FRL": ExtResource("17_j7cod"),
+&"corridor_RL": ExtResource("9_m4no4"),
+&"room_B": ExtResource("10_qyw8t"),
+&"room_F": ExtResource("11_s4n2d"),
+&"room_L": ExtResource("12_2krrd"),
+&"room_R": ExtResource("13_idgj3")
 })
 metadata/_custom_type_script = "uid://dre8og3ttstbp"

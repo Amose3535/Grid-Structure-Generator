@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://vl6o32bikbe1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_0j8ai"]
+size = Vector3(1.27, 0.5, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jgrl8"]
+size = Vector3(0.75, 0.5, 0.5)
+
+[node name="CorridorFbl" type="Node3D" unique_id=739977093]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1124837926]
+mesh = SubResource("BoxMesh_0j8ai")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=266815023]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, -0.125)
+mesh = SubResource("BoxMesh_jgrl8")

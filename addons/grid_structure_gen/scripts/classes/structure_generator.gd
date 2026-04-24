@@ -381,7 +381,7 @@ func generate() -> Dictionary:
 
 ## If you plan on using multithreading, CALL THIS function instead of generate()
 func generate_async() -> void:
-	var grid_result: Dictionary[Vector3i,Cell] = generate()
+	var grid_result: Dictionary = generate()
 	emit_signal.call_deferred("generation_finished", grid_result)
 
 

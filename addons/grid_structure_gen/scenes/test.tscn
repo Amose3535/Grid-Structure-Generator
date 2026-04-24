@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://cr1xsst626ab8" path="res://addons/grid_structure_gen/scripts/classes/processors/room_culler.gd" id="4_xmmen"]
 [ext_resource type="Gradient" uid="uid://bsdxwmlxaemcd" path="res://addons/grid_structure_gen/resources/color_gradient.tres" id="5_2xsvl"]
 [ext_resource type="Script" uid="uid://bgv6v3myy5glf" path="res://addons/grid_structure_gen/scripts/classes/processors/graph_joiner.gd" id="5_3utgd"]
+[ext_resource type="Script" uid="uid://coma1kgdbau03" path="res://addons/grid_structure_gen/scripts/classes/processors/open_segment_fixer.gd" id="7_y4xda"]
 [ext_resource type="Script" uid="uid://d34iuod6bowel" path="res://addons/grid_structure_gen/scenes/perspective_button.gd" id="10_bg42g"]
 
 [sub_resource type="Resource" id="Resource_3utgd"]
@@ -26,6 +27,10 @@ metadata/_custom_type_script = "uid://bgv6v3myy5glf"
 [sub_resource type="Resource" id="Resource_bg42g"]
 script = ExtResource("4_3utgd")
 metadata/_custom_type_script = "uid://eu7xdlll814t"
+
+[sub_resource type="Resource" id="Resource_tkx5k"]
+script = ExtResource("7_y4xda")
+metadata/_custom_type_script = "uid://coma1kgdbau03"
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g4yro"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -63,10 +68,9 @@ albedo_color = Color(0, 0.47843137, 1, 1)
 [node name="Test" type="Node3D" unique_id=457018281]
 script = ExtResource("1_wrfgs")
 test_structure = ExtResource("2_g4yro")
-structure_size = Vector3i(10, 10, 10)
+structure_size = Vector3i(20, 1, 20)
 pre_processors_enabled = false
-post_processors_enabled = false
-post_processors = Array[ExtResource("3_xmmen")]([SubResource("Resource_3utgd"), SubResource("Resource_cc2p2"), SubResource("Resource_bg42g")])
+post_processors = Array[ExtResource("3_xmmen")]([SubResource("Resource_3utgd"), SubResource("Resource_cc2p2"), SubResource("Resource_bg42g"), SubResource("Resource_tkx5k")])
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]
 environment = SubResource("Environment_gpnbv")
