@@ -20,7 +20,6 @@
 
 [resource]
 script = ExtResource("1_0k5cb")
-grid_size = 1.5
 structure_sections = Dictionary[StringName, ExtResource("2_x3n3p")]({
 &"corridor_BL": ExtResource("3_jv8gr"),
 &"corridor_BR": ExtResource("4_pvd8l"),
