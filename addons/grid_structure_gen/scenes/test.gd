@@ -4,9 +4,10 @@ extends Node3D
 
 @export var test_structure: Structure = null
 @export var structure_size: Vector3i = Vector3i(5,5,5)
+@export var pre_processors_enabled: bool = true
 @export var pre_processors: Array[GridProcessorBaseType] = []
+@export var post_processors_enabled: bool = true
 @export var post_processors: Array[GridProcessorBaseType] = []
-@export var generate_async: bool = true
 @export var center_structure: bool = true
 
 
@@ -30,16 +31,14 @@ func _generate_structure() -> void:
 	
 	var node: Node3D = null
 	
-	if generate_async:
-		var pipeline: StructurePipeline = StructurePipeline.new(test_structure, structure_size)
+	var pipeline: StructurePipeline = StructurePipeline.new(test_structure, structure_size)
+	if pre_processors_enabled:
 		for pre_processor:GridProcessorBaseType in pre_processors:
 			pipeline.add_pre_processor(pre_processor)
+	if post_processors_enabled:
 		for post_processor:GridProcessorBaseType in post_processors:
 			pipeline.add_post_processor(post_processor)
-		node = await pipeline.run()
-	else:
-		var pipeline: StructurePipeline = StructurePipeline.new(test_structure, structure_size)
-		node = await pipeline.run(false)
+	node = await pipeline.run()
 	
 	if node:
 		_clear_children()

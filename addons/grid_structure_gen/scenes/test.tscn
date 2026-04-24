@@ -19,7 +19,7 @@ metadata/_custom_type_script = "uid://cr1xsst626ab8"
 [sub_resource type="Resource" id="Resource_cc2p2"]
 script = ExtResource("5_3utgd")
 join_count = 3
-connector_state = &"join_connector"
+connector_state = &"corridor_FBRL"
 max_path_length = 4
 metadata/_custom_type_script = "uid://bgv6v3myy5glf"
 
@@ -63,7 +63,9 @@ albedo_color = Color(0, 0.47843137, 1, 1)
 [node name="Test" type="Node3D" unique_id=457018281]
 script = ExtResource("1_wrfgs")
 test_structure = ExtResource("2_g4yro")
-structure_size = Vector3i(20, 1, 20)
+structure_size = Vector3i(10, 10, 10)
+pre_processors_enabled = false
+post_processors_enabled = false
 post_processors = Array[ExtResource("3_xmmen")]([SubResource("Resource_3utgd"), SubResource("Resource_cc2p2"), SubResource("Resource_bg42g")])
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]

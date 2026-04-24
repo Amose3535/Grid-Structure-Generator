@@ -6,5 +6,5 @@
 [resource]
 script = ExtResource("1_y700r")
 segment_scene = ExtResource("2_nwihf")
-seed_weight = 0.0
+seed_weight = -0.1
 metadata/_custom_type_script = "uid://dld6wt4dginmo"
