@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dhtotp60f8c63"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_l6ndc"]
+flip_faces = true
 size = Vector3(0.75, 0.5, 0.5)
 
 [node name="CorridorFr" type="Node3D" unique_id=1324401797]

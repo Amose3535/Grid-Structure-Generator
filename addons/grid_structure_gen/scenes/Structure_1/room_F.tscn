@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bvxk7lebexpku"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_x5y48"]
+flip_faces = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5ax3d"]
 albedo_color = Color(0, 0.38431373, 1, 1)

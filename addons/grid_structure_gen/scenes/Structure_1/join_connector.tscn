@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c3ygxmd0wrgp1"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_uua42"]
+flip_faces = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4xs06"]
 albedo_color = Color(0.5568628, 0, 0.61960787, 1)
