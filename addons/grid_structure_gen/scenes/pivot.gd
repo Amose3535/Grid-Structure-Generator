@@ -21,6 +21,10 @@ func _input(event: InputEvent) -> void:
 			target_rot.x -= (event as InputEventMouseMotion).screen_relative.y * sensitivity.y
 			target_rot.x = clamp(target_rot.x, deg_to_rad(-90), deg_to_rad(90))
 
+func _view_top_down() -> void:
+	target_rot = Vector3(deg_to_rad(-90),deg_to_rad(0),deg_to_rad(0))
+	get_window().get_camera_3d().projection = Camera3D.PROJECTION_ORTHOGONAL
+
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_cancel"):

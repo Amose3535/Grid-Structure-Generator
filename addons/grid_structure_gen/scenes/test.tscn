@@ -33,8 +33,11 @@ script = ExtResource("7_y4xda")
 metadata/_custom_type_script = "uid://coma1kgdbau03"
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g4yro"]
-sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+sky_top_color = Color(0.3946049, 0.5260038, 0.7814824, 1)
+sky_horizon_color = Color(0.5961717, 0.74437594, 0.91008765, 1)
+sky_curve = 0.06997754
 ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_curve = 1e-05
 
 [sub_resource type="Sky" id="Sky_l0iqv"]
 sky_material = SubResource("ProceduralSkyMaterial_g4yro")
@@ -176,4 +179,20 @@ grow_horizontal = 0
 text = "Perspective mode: Perspective"
 script = ExtResource("10_bg42g")
 
+[node name="Button" type="Button" parent="CanvasLayer/Control/Control/PerspectiveButton" unique_id=1738794485]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -121.0
+offset_top = 9.0
+offset_right = 121.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Top-down"
+
 [connection signal="pressed" from="CanvasLayer/Control/Control/Re_Generate_button" to="." method="_on_regenerate_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/Control/PerspectiveButton/Button" to="Pivot" method="_view_top_down"]

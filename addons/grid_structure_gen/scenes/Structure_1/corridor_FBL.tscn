@@ -1,11 +1,9 @@
 [gd_scene format=3 uid="uid://vl6o32bikbe1"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0j8ai"]
-flip_faces = true
 size = Vector3(1.27, 0.5, 0.5)
 
 [sub_resource type="BoxMesh" id="BoxMesh_jgrl8"]
-flip_faces = true
 size = Vector3(0.75, 0.5, 0.5)
 
 [node name="CorridorFbl" type="Node3D" unique_id=739977093]
