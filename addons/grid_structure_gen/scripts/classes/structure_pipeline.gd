@@ -9,7 +9,8 @@ class_name StructurePipeline
 ##   pipeline.add_post_processor(RoomCuller.new(5))
 ##   pipeline.add_post_processor(GraphJoiner.new(2))
 ##   pipeline.add_post_processor(StructureDefiner.new())
-##   var node: Node3D = await pipeline.run_async()
+##   var run_mode: RunMode = RunMode.FULL
+##   var node: Node3D = await pipeline.run(run_mode)
 ##   if node:
 ##       add_child(node)
 ## [/codeblock]
