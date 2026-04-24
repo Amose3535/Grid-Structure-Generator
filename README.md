@@ -12,7 +12,9 @@ Suitable for stuff like: Office interiors, city roadmap generator, etc etc.
 ## How to use
 WARNING: This is a HIGHLY COMPLEX system so BEFORE installing it, if you're planning to make use of its full toolset, make sure you're fully comfortable with the concepts of WFC (Wave Function Collapse).
 IF you aren't going to make use of the full tileset, you might be file with just editing the default StructureSegment scenes.
+
 NOTE: The system is designed to backtrack and retry when conradictions are met in a cell, but sometimes it can fully fail. If this happens, double check your tileset and ry to tweak/remove/add values. This exhibits very complex behavior and obviously is not 100% predictable as sometimes it can generate without issues, others it could give contradictions, so make sure to thouroghly test your setup before calling it a day.
+
 NOTE 2: The addon is thoroughly documented so, when in doubt, most of the times there's a docstring explaining what that specific thing does. To see what an @export does, hover over it in the editor. For further info, open up the in-editor Documentation and search for the specific class you're dubious about (defualt godot keybind: F1).
 
 Depending on the need, This plugin can be used in two main ways:
