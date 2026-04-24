@@ -21,7 +21,7 @@ Depending on the need, This plugin can be used in two main ways:
 It can also be set up to either automatically generate the structure's root node, or to have it produce the data grid ONLY.
 
 ### Quickstart instructions:
-```swift
+```gdscript
 # First create the pipeline for the generator
 var pipeline := StructurePipeline.new(my_structure, Vector3i(10, 3, 10))
 
