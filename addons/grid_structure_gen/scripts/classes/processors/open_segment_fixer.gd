@@ -31,30 +31,33 @@ const DIR_BITS := {
 func process_grid(grid: Dictionary) -> Dictionary:
 	_build_profile_map()
 	
-	for pos: Vector3i in grid:
-		var cell: StructureGenerator.Cell = grid[pos]
-		if not GridGraphUtils.is_solid(cell):
-			continue
-		
-		var real_profile: int = _get_real_profile(grid, pos)
-		var current_profile: int = _get_segment_profile(cell.final_state)
-		
-		if real_profile == current_profile:
-			continue  # already correct, nothing to do
-	
-		# Find candidates that match the real connectivity
-		var candidates: Array = _profile_to_states.get(real_profile, [])
-		if candidates.is_empty():
+	var changed: bool = true
+	while changed:
+		changed = false
+		for pos: Vector3i in grid:
+			var cell: StructureGenerator.Cell = grid[pos]
+			if not GridGraphUtils.is_solid(cell):
+				continue
+			
+			var real_profile: int = _get_real_profile(grid, pos)
+			var current_profile: int = _get_segment_profile(cell.final_state)
+			
+			if real_profile == current_profile:
+				continue
+			
+			var candidates: Array = _profile_to_states.get(real_profile, [])
+			if candidates.is_empty():
+				if debug:
+					push_warning("OpenSegmentFixer: no segment matches profile %s at %s. Leaving as-is." \
+						% [_profile_to_string(real_profile), str(pos)])
+				continue
+			
+			var chosen: StringName = _pick_weighted(candidates)
+			cell.final_state = chosen
+			cell.possible_states = { chosen: 1.0 }
+			changed = true
 			if debug:
-				push_warning("OpenSegmentFixer: no segment matches profile %s at %s. Leaving as-is." \
-					% [_profile_to_string(real_profile), str(pos)])
-			continue
-		
-		var chosen: StringName = _pick_weighted(candidates)
-		cell.final_state = chosen
-		cell.possible_states = { chosen: 1.0 }
-		if debug:
-			print("OpenSegmentFixer: %s → %s at %s" % [cell.final_state, chosen, str(pos)])
+				print("OpenSegmentFixer: %s → %s at %s" % [cell.final_state, chosen, str(pos)])
 	
 	return grid
 

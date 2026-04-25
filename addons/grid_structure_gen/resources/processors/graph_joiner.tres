@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GraphJoiner" format=3 uid="uid://dssxrbujpq8xa"]
+
+[ext_resource type="Script" uid="uid://bgv6v3myy5glf" path="res://addons/grid_structure_gen/scripts/classes/processors/graph_joiner.gd" id="1_nc2ld"]
+
+[resource]
+script = ExtResource("1_nc2ld")
+join_count = 3
+connector_state = &"corridor_FBRL"
+max_path_length = 4
+metadata/_custom_type_script = "uid://bgv6v3myy5glf"

@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="StructureSegment" format=3 uid="uid://d0rfl3fxdqpjq"]
+
+[ext_resource type="Script" uid="uid://dld6wt4dginmo" path="res://addons/grid_structure_gen/scripts/classes/structure_segment.gd" id="1_4tc8b"]
+[ext_resource type="PackedScene" uid="uid://br1x8hah3ok87" path="res://addons/grid_structure_gen/scenes/Structure_1/corridors/+_shaped/corridor_FBRL.tscn" id="2_awyak"]
+
+[resource]
+script = ExtResource("1_4tc8b")
+segment_scene = ExtResource("2_awyak")
+seed_weight = 0.0
+forward = Dictionary[StringName, float]({
+&"corridor_FB": 0.19,
+&"corridor_FBRL": 0.01,
+&"room_F": 0.8
+})
+backward = Dictionary[StringName, float]({
+&"corridor_FB": 0.19,
+&"corridor_FBRL": 0.01,
+&"room_B": 0.8
+})
+left = Dictionary[StringName, float]({
+&"corridor_FBRL": 0.01,
+&"corridor_RL": 0.19,
+&"room_L": 0.8
+})
+right = Dictionary[StringName, float]({
+&"corridor_FBRL": 0.01,
+&"corridor_RL": 0.19,
+&"room_R": 0.8
+})
+metadata/_custom_type_script = "uid://dld6wt4dginmo"

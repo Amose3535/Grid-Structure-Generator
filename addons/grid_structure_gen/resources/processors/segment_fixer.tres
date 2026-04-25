@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="OpenSegmentFixer" format=3 uid="uid://35q7n3kqt114"]
+
+[ext_resource type="Script" uid="uid://coma1kgdbau03" path="res://addons/grid_structure_gen/scripts/classes/processors/open_segment_fixer.gd" id="1_iepr1"]
+
+[resource]
+script = ExtResource("1_iepr1")
+metadata/_custom_type_script = "uid://coma1kgdbau03"

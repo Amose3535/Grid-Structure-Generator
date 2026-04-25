@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="RoomCuller" format=3 uid="uid://cbo8m1oyd1oyv"]
+
+[ext_resource type="Script" uid="uid://cr1xsst626ab8" path="res://addons/grid_structure_gen/scripts/classes/processors/room_culler.gd" id="1_xfc43"]
+
+[resource]
+script = ExtResource("1_xfc43")
+min_size = 7
+metadata/_custom_type_script = "uid://cr1xsst626ab8"

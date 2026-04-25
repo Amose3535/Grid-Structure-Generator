@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Structure" format=3 uid="uid://d0nwlj6fpm74k"]
+
+[ext_resource type="Script" uid="uid://dre8og3ttstbp" path="res://addons/grid_structure_gen/scripts/classes/structure.gd" id="1_gkkoq"]
+[ext_resource type="Script" uid="uid://dld6wt4dginmo" path="res://addons/grid_structure_gen/scripts/classes/structure_segment.gd" id="2_84ojd"]
+[ext_resource type="Resource" uid="uid://d1fhnya5ak3f8" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/L_shaped/corridor_BL_compact.tres" id="3_elmep"]
+[ext_resource type="Resource" uid="uid://n67054dvcv4q" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/L_shaped/corridor_BR_compact.tres" id="4_exhis"]
+[ext_resource type="Resource" uid="uid://dpt20l8o5bsso" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/T_shaped/corridor_BRL_compact.tres" id="5_w7xr3"]
+[ext_resource type="Resource" uid="uid://bxnp8ggnolj83" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/I_shaped/corridor_FB_compact.tres" id="6_eol6i"]
+[ext_resource type="Resource" uid="uid://ccxthnhm6h7gk" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/T_shaped/corridor_FBL_compact.tres" id="7_itgb2"]
+[ext_resource type="Resource" uid="uid://cby214k3gnkpw" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/T_shaped/corridor_FBR_compact.tres" id="8_jbup8"]
+[ext_resource type="Resource" uid="uid://d0rfl3fxdqpjq" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/+_shaped/corridor_FBRL.tres" id="9_2ykoo"]
+[ext_resource type="Resource" uid="uid://gw8qw60vixo3" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/L_shaped/corridor_FL_compact.tres" id="10_b4vt0"]
+[ext_resource type="Resource" uid="uid://dj45ob0h4k821" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/L_shaped/corridor_FR_compact.tres" id="11_vvwpo"]
+[ext_resource type="Resource" uid="uid://bjmi8lx4fpcje" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/T_shaped/corridor_FRL_compact.tres" id="12_10qrw"]
+[ext_resource type="Resource" uid="uid://bhbhn3y8hlq0t" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/corridors/I_shaped/corridor_RL_compact.tres" id="13_d65ao"]
+[ext_resource type="Resource" uid="uid://ll6eiepjp2cl" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/rooms/room_B_compact.tres" id="14_piq00"]
+[ext_resource type="Resource" uid="uid://bjt1urx6ol0km" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/rooms/room_F_compact.tres" id="15_d0ttc"]
+[ext_resource type="Resource" uid="uid://dtje5j7bnjhof" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/rooms/room_L_compact.tres" id="16_4t08g"]
+[ext_resource type="Resource" uid="uid://cnlfcaqvo34rp" path="res://addons/grid_structure_gen/resources/structures/structure_1_compact/segments/rooms/room_R_compact.tres" id="17_mf6b4"]
+
+[resource]
+script = ExtResource("1_gkkoq")
+structure_sections = Dictionary[StringName, ExtResource("2_84ojd")]({
+&"corridor_BL": ExtResource("3_elmep"),
+&"corridor_BR": ExtResource("4_exhis"),
+&"corridor_BRL": ExtResource("5_w7xr3"),
+&"corridor_FB": ExtResource("6_eol6i"),
+&"corridor_FBL": ExtResource("7_itgb2"),
+&"corridor_FBR": ExtResource("8_jbup8"),
+&"corridor_FBRL": ExtResource("9_2ykoo"),
+&"corridor_FL": ExtResource("10_b4vt0"),
+&"corridor_FR": ExtResource("11_vvwpo"),
+&"corridor_FRL": ExtResource("12_10qrw"),
+&"corridor_RL": ExtResource("13_d65ao"),
+&"room_B": ExtResource("14_piq00"),
+&"room_F": ExtResource("15_d0ttc"),
+&"room_L": ExtResource("16_4t08g"),
+&"room_R": ExtResource("17_mf6b4")
+})
+metadata/_custom_type_script = "uid://dre8og3ttstbp"
