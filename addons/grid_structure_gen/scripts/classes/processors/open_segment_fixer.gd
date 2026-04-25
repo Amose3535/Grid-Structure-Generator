@@ -85,12 +85,17 @@ func _get_segment_profile(state_name: StringName) -> int:
 			profile |= (1 << DIR_BITS[dir])
 	return profile
 
-# Returns the bitmask of CONNECTED faces based on actual solid neighbors in the grid.
+## Returns the bitmask of CONNECTED faces based on actual solid neighbors in the grid.
 func _get_real_profile(grid: Dictionary, pos: Vector3i) -> int:
 	var profile: int = 0
+	var cell: StructureGenerator.Cell = grid[pos]
 	for dir: StringName in DIR_OFFSETS:
-		var neighbor_pos: Vector3i = pos + DIR_OFFSETS[dir]
-		if grid.has(neighbor_pos) and GridGraphUtils.is_solid(grid[neighbor_pos]):
+		var offset: Vector3i = DIR_OFFSETS[dir]
+		var neighbor_pos: Vector3i = pos + offset
+		if not grid.has(neighbor_pos):
+			continue
+		var neighbor_cell: StructureGenerator.Cell = grid[neighbor_pos]
+		if GridGraphUtils.are_logically_connected(structure, cell, neighbor_cell, offset):
 			profile |= (1 << DIR_BITS[dir])
 	return profile
 
