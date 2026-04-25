@@ -19,7 +19,7 @@ func _init(minimum_size: int = 4) -> void:
 
 ## Function used to process the grid
 func process_grid(grid: Dictionary) -> Dictionary:
-	var components: Array = GridGraphUtils.find_components(grid)
+	var components: Array = GridGraphUtils.find_components(grid, structure)
 	var culled: int = 0
 	
 	for component: Array in components:

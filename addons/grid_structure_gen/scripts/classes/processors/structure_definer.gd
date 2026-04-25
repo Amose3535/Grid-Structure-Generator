@@ -16,7 +16,7 @@ class_name StructureDefiner
 @export var debug: bool = false
 
 func process_grid(grid: Dictionary) -> Dictionary:
-	var components: Array = GridGraphUtils.find_components(grid)
+	var components: Array = GridGraphUtils.find_components(grid, structure)
 	
 	if components.size() <= 1:
 		# Nothing to do: 0 or 1 component

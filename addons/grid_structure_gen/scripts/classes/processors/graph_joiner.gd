@@ -47,7 +47,7 @@ func process_grid(grid: Dictionary) -> Dictionary:
 		conn_state = structure.structure_sections.keys()[0]
 	
 	for _i in range(join_count):
-		var components: Array = GridGraphUtils.find_components(grid)
+		var components: Array = GridGraphUtils.find_components(grid, structure)
 		if components.size() < 2:
 			if debug: print("GraphJoiner: only one component left, stopping early.")
 			break
