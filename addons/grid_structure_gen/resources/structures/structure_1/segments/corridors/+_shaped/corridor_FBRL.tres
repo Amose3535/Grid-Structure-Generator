@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="StructureSegment" format=3 uid="uid://oelvl5qb80fu"]
 
 [ext_resource type="Script" uid="uid://dld6wt4dginmo" path="res://addons/grid_structure_gen/scripts/classes/structure_segment.gd" id="1_git8s"]
-[ext_resource type="PackedScene" uid="uid://br1x8hah3ok87" path="res://addons/grid_structure_gen/scenes/Structure_1/corridor_FBRL.tscn" id="2_2huj5"]
+[ext_resource type="PackedScene" uid="uid://br1x8hah3ok87" path="res://addons/grid_structure_gen/scenes/Structure_1/corridors/+_shaped/corridor_FBRL.tscn" id="2_2huj5"]
 
 [resource]
 script = ExtResource("1_git8s")
