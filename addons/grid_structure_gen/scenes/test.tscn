@@ -12,6 +12,27 @@
 [ext_resource type="Resource" uid="uid://c32qolp0ya1rk" path="res://addons/grid_structure_gen/resources/processors/structure_definer.tres" id="6_p7o02"]
 [ext_resource type="Script" uid="uid://d34iuod6bowel" path="res://addons/grid_structure_gen/scenes/perspective_button.gd" id="10_bg42g"]
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_g4yro"]
+radius = 0.05
+height = 50.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gpnbv"]
+shading_mode = 0
+albedo_color = Color(1, 0.14901961, 0.1882353, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_l0iqv"]
+top_radius = 0.0
+bottom_radius = 0.25
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l0iqv"]
+shading_mode = 0
+albedo_color = Color(0.23529412, 0.9529412, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2xsvl"]
+shading_mode = 0
+albedo_color = Color(0, 0.47843137, 1, 1)
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g4yro"]
 sky_top_color = Color(0.3946049, 0.5260038, 0.7814824, 1)
 sky_horizon_color = Color(0.5961717, 0.74437594, 0.91008765, 1)
@@ -27,75 +48,66 @@ background_mode = 2
 sky = SubResource("Sky_l0iqv")
 tonemap_mode = 2
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_g4yro"]
-radius = 0.05
-height = 50.0
+[sub_resource type="InputEventKey" id="InputEventKey_y4xda"]
+device = -1
+pressed = true
+keycode = 32
+unicode = 32
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l0iqv"]
-shading_mode = 0
-albedo_color = Color(0.23529412, 0.9529412, 0, 1)
+[sub_resource type="Shortcut" id="Shortcut_tkx5k"]
+events = [SubResource("InputEventKey_y4xda")]
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_l0iqv"]
-top_radius = 0.0
-bottom_radius = 0.25
-height = 1.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gpnbv"]
-shading_mode = 0
-albedo_color = Color(1, 0.14901961, 0.1882353, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2xsvl"]
-shading_mode = 0
-albedo_color = Color(0, 0.47843137, 1, 1)
-
-[node name="Test" type="Node3D" unique_id=457018281]
+[node name="Test" type="Node3D" unique_id=457018281 node_paths=PackedStringArray("axis")]
 script = ExtResource("1_wrfgs")
 test_structure = ExtResource("2_g4yro")
 structure_size = Vector3i(20, 1, 20)
 pre_processors_enabled = false
 post_processors = Array[ExtResource("3_xmmen")]([ExtResource("4_y4xda"), ExtResource("5_tkx5k"), ExtResource("6_p7o02"), ExtResource("4_3utgd")])
+axis = NodePath("Axis")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]
-environment = SubResource("Environment_gpnbv")
+[node name="Axis" type="Node3D" parent="." unique_id=1676656078]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1304499009]
-transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
-shadow_enabled = true
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1969220233]
-cast_shadow = 0
-mesh = SubResource("CapsuleMesh_g4yro")
-surface_material_override/0 = SubResource("StandardMaterial3D_l0iqv")
-
-[node name="MeshInstance3D5" type="MeshInstance3D" parent="MeshInstance3D" unique_id=342756663]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_l0iqv")
-surface_material_override/0 = SubResource("StandardMaterial3D_l0iqv")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1630930079]
+[node name="X-Axis" type="MeshInstance3D" parent="Axis" unique_id=1630930079]
 transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_g4yro")
 surface_material_override/0 = SubResource("StandardMaterial3D_gpnbv")
 
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D2" unique_id=773810704]
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Axis/X-Axis" unique_id=773810704]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0927847e-06, 25, 0)
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_l0iqv")
 surface_material_override/0 = SubResource("StandardMaterial3D_gpnbv")
 
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=62042514]
+[node name="Y-Axis" type="MeshInstance3D" parent="Axis" unique_id=1969220233]
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_g4yro")
+surface_material_override/0 = SubResource("StandardMaterial3D_l0iqv")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Axis/Y-Axis" unique_id=342756663]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_l0iqv")
+surface_material_override/0 = SubResource("StandardMaterial3D_l0iqv")
+
+[node name="Z-Axis" type="MeshInstance3D" parent="Axis" unique_id=62042514]
 transform = Transform3D(1.9106855e-15, -4.371139e-08, -1, -1, -4.371139e-08, 0, -4.371139e-08, 1, -4.371139e-08, 0, 0, 0)
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_g4yro")
 surface_material_override/0 = SubResource("StandardMaterial3D_2xsvl")
 
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D3" unique_id=1219493730]
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Axis/Z-Axis" unique_id=1219493730]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0927847e-06, 25, -1.0927847e-06)
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_l0iqv")
 surface_material_override/0 = SubResource("StandardMaterial3D_2xsvl")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1748438004]
+environment = SubResource("Environment_gpnbv")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment" unique_id=1304499009]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
 
 [node name="Pivot" type="Node3D" parent="." unique_id=652139535 node_paths=PackedStringArray("camera")]
 script = ExtResource("3_l0iqv")
@@ -107,9 +119,9 @@ camera = NodePath("Camera3D")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24.8)
 size = 20.0
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=162327725]
+[node name="UI" type="CanvasLayer" parent="." unique_id=162327725]
 
-[node name="Control" type="MarginContainer" parent="CanvasLayer" unique_id=78940029]
+[node name="Control" type="MarginContainer" parent="UI" unique_id=78940029]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -120,10 +132,10 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="Control" type="Control" parent="CanvasLayer/Control" unique_id=1183053761]
+[node name="Control" type="Control" parent="UI/Control" unique_id=1183053761]
 layout_mode = 2
 
-[node name="Re_Generate_button" type="Button" parent="CanvasLayer/Control/Control" unique_id=477554931]
+[node name="Re_Generate_button" type="Button" parent="UI/Control/Control" unique_id=477554931]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 3
@@ -135,9 +147,10 @@ offset_left = -130.0
 offset_top = -46.0
 grow_horizontal = 0
 grow_vertical = 0
+shortcut = SubResource("Shortcut_tkx5k")
 text = "Re-generate"
 
-[node name="FPS_counter" type="RichTextLabel" parent="CanvasLayer/Control/Control" unique_id=1193356745]
+[node name="FPS_counter" type="RichTextLabel" parent="UI/Control/Control" unique_id=1193356745]
 layout_mode = 0
 offset_right = 151.0
 offset_bottom = 125.0
@@ -148,7 +161,7 @@ script = ExtResource("4_gpnbv")
 color_gradient = ExtResource("5_2xsvl")
 metadata/_custom_type_script = "uid://bmcyxphiu3fut"
 
-[node name="PerspectiveButton" type="Button" parent="CanvasLayer/Control/Control" unique_id=955423423]
+[node name="PerspectiveButton" type="Button" parent="UI/Control/Control" unique_id=955423423]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -159,7 +172,7 @@ grow_horizontal = 0
 text = "Perspective mode: Perspective"
 script = ExtResource("10_bg42g")
 
-[node name="Button" type="Button" parent="CanvasLayer/Control/Control/PerspectiveButton" unique_id=1738794485]
+[node name="Button" type="Button" parent="UI/Control/Control/PerspectiveButton" unique_id=1738794485]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -174,5 +187,16 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "Top-down"
 
-[connection signal="pressed" from="CanvasLayer/Control/Control/Re_Generate_button" to="." method="_on_regenerate_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Control/Control/PerspectiveButton/Button" to="Pivot" method="_view_top_down"]
+[node name="Button" type="Button" parent="UI/Control/Control" unique_id=1138593757]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -37.0
+offset_right = 105.0
+grow_vertical = 0
+text = "Toggle Axis"
+
+[connection signal="pressed" from="UI/Control/Control/Re_Generate_button" to="." method="_on_regenerate_button_pressed"]
+[connection signal="pressed" from="UI/Control/Control/PerspectiveButton/Button" to="Pivot" method="_view_top_down"]
+[connection signal="pressed" from="UI/Control/Control/Button" to="." method="toggle_axis"]

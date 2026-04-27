@@ -3,7 +3,12 @@
 [sub_resource type="BoxMesh" id="BoxMesh_81d5f"]
 size = Vector3(1, 0.5, 0.5)
 
-[node name="Corridor" type="Node3D" unique_id=1357340124]
+[node name="Corridor" type="CSGCombiner3D" unique_id=1782246720]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=311647758]
+visible = false
 mesh = SubResource("BoxMesh_81d5f")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1586486130]
+flip_faces = true
+size = Vector3(1.0490723, 0.5, 0.5)

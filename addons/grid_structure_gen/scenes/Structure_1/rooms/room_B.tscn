@@ -5,8 +5,13 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qgggt"]
 albedo_color = Color(1, 0.47058824, 0.2, 1)
 
-[node name="RoomB" type="Node3D" unique_id=1775250282]
+[node name="RoomB" type="CSGCombiner3D" unique_id=849080751]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=523557932]
+visible = false
 mesh = SubResource("BoxMesh_2vyc4")
 surface_material_override/0 = SubResource("StandardMaterial3D_qgggt")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=378334854]
+flip_faces = true
+material = SubResource("StandardMaterial3D_qgggt")

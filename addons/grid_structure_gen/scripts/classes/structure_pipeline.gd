@@ -50,7 +50,7 @@ func _inject_context(processor: GridProcessorBaseType) -> void:
 ## Runs the FULL pipeline. Returns the final Node3D, or null on failure.
 ## Always call with await.[br]
 ## NOTE: When run_mode isn't set correctly (invalid enum, or int), it will return the grid, NOT the node!
-func run(run_mode: RunMode = RunMode.FULL) -> Variant:
+func run(run_mode: RunMode = RunMode.FULL, root_node: Node = null) -> Variant:
 	# Step 1) build the WFC generator
 	var generator := StructureGenerator.new(_structure, _bounds)
 	var current_grid: Dictionary = generator.grid
@@ -85,7 +85,7 @@ func run(run_mode: RunMode = RunMode.FULL) -> Variant:
 	# Step 5) Return corresponding request.
 	match run_mode:
 		RunMode.FULL:
-			var result_node: Node3D = generator._build_3d_structure(current_grid)
+			var result_node: Node3D = generator._build_3d_structure(current_grid,(null if root_node == null else root_node))
 			pipeline_finished.emit(result_node)
 			return result_node
 		

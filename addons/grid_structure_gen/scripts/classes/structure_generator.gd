@@ -386,8 +386,8 @@ func generate_async() -> void:
 
 
 ## This function generates the 3D scene given each cell.
-func _build_3d_structure(from_grid: Dictionary[Vector3i, Cell] = grid) -> Node3D:
-	var root: Node3D = Node3D.new()
+func _build_3d_structure(from_grid: Dictionary[Vector3i, Cell] = grid, root_node: Node = null) -> Node3D:
+	var root: Node = (Node3D.new() if root_node == null else root_node)
 	root.name = "GeneratedStructure"
 	var offset: float = structure.grid_size
 	

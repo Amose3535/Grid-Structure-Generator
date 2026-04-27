@@ -10,6 +10,8 @@ extends Node3D
 @export var post_processors: Array[GridProcessorBaseType] = []
 @export var center_structure: bool = true
 
+@export var axis: Node3D = null
+
 
 var structure_origin: Node3D = null
 
@@ -38,7 +40,7 @@ func _generate_structure() -> void:
 	if post_processors_enabled:
 		for post_processor:GridProcessorBaseType in post_processors:
 			pipeline.add_post_processor(post_processor)
-	node = await pipeline.run()
+	node = await pipeline.run(StructurePipeline.RunMode.FULL,CSGCombiner3D.new())
 	
 	if node:
 		_clear_children()
@@ -46,6 +48,9 @@ func _generate_structure() -> void:
 	else:
 		push_error("Generation failed :(")
 
+func toggle_axis() -> void:
+	if axis.visible: axis.hide()
+	else: axis.show()
 
 func _clear_children() -> void:
 	var child_nodes: Array[Node] = structure_origin.get_children()
@@ -55,4 +60,5 @@ func _clear_children() -> void:
 func _on_regenerate_button_pressed() -> void:
 	%Re_Generate_button.disabled = true
 	await _generate_structure()
+	
 	%Re_Generate_button.disabled = false

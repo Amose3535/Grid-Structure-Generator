@@ -3,13 +3,25 @@
 [sub_resource type="BoxMesh" id="BoxMesh_t1tqq"]
 size = Vector3(0.75, 0.5, 0.5)
 
-[node name="CorridorBr" type="Node3D" unique_id=2005689590]
+[node name="CorridorBr" type="CSGCombiner3D" unique_id=1960073272]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=714928561]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.131, 0, 0)
+visible = false
 mesh = SubResource("BoxMesh_t1tqq")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=430149198]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, -0.125)
+visible = false
 mesh = SubResource("BoxMesh_t1tqq")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=158100421]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13061523, 0, 0)
+flip_faces = true
+size = Vector3(0.76123047, 0.5, 0.5)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=1705035649]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.12597656)
+flip_faces = true
+size = Vector3(0.5, 0.5, 0.7519531)
